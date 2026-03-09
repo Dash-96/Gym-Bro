@@ -1,35 +1,32 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Tabs } from "expo-router";
+import { Dumbbell } from "lucide-react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { appStyle } from "../constants/theme";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+export default function TabsLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Tabs screenOptions={{ tabBarActiveTintColor: appStyle.colors.primaryColor }}>
+          <Tabs.Screen
+            name="home"
+            options={{
+              headerShown: false,
+              tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? "home-sharp" : "home-outline"} color={color} size={24} />,
+            }}
+          />
+          <Tabs.Screen
+            name="workout"
+            options={{
+              headerShown: false,
+              tabBarIcon: ({ color, focused }) => <Dumbbell size={24} color={color} />,
+            }}
+          />
+          {/* Prevent expo-router from exposing this nested screen as a tab */}
+          <Tabs.Screen name="home/screens/homeScreen" options={{ href: null }} />
+        </Tabs>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

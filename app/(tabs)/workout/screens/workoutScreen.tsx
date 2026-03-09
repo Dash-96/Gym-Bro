@@ -1,0 +1,19 @@
+import { useHiddenTabBar } from "@/app/appHooks/hooks";
+import { View } from "react-native";
+import ExerciseCountContext from "../components/excerciseCountContext";
+import WorkoutHeader from "../components/wokoutHeader";
+import WorkoutExerciseCardList from "../components/workoutExerciseCardList";
+import WorkoutScreenHeader from "../components/workoutScrennHeader";
+
+export default function WorkoutScreen() {
+  useHiddenTabBar();
+  return (
+    <ExerciseCountContext>
+      <View style={{ alignItems: "center" }}>
+        <WorkoutHeader />
+        <WorkoutScreenHeader />
+        <WorkoutExerciseCardList />
+      </View>
+    </ExerciseCountContext>
+  );
+}

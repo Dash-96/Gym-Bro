@@ -41,3 +41,7 @@ app-example
 # generated native folders
 /ios
 /android
+
+# custom files and folders
+db_drizzle
+drizzle.config.ts
