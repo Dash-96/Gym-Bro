@@ -7,7 +7,7 @@ import { appStyle } from "../constants/theme";
 export default function TabsLayout() {
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }} edges={["top", "right", "left"]}>
         <Tabs screenOptions={{ tabBarActiveTintColor: appStyle.colors.primaryColor }}>
           <Tabs.Screen
             name="home"

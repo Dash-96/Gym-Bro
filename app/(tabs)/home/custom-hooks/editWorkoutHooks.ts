@@ -17,7 +17,7 @@ export function useCardExpand(setCount = 1, offset = 0) {
   }));
   function changeCardSize() {
     setIsExpanded((prev) => !prev);
-    cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? expandedSize : shrinkedSize);
+    cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? expandedSize : shrinkedSize, { duration: 100 });
   }
   return { cardAnimatedStyle, changeCardSize, isExpanded };
 }

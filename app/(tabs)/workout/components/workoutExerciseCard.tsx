@@ -1,7 +1,7 @@
 import { appStyle, cardStyles, fontSizes, fontStyles } from "@/app/constants/theme";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { CircleCheckBig, Dot } from "lucide-react-native";
-import { useEffect, useRef, useState } from "react";
+import { Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useArrowRotate, useCardExpand } from "../../home/custom-hooks/editWorkoutHooks";
@@ -10,8 +10,22 @@ import { useExerciseCountContext } from "./excerciseCountContext";
 
 interface Props {
   exerciseData: Exercise;
+  ref: Ref<CardRef>;
+  onCardFocus: (index: number) => void;
 }
-export default function WorkoutExerciseCard({ exerciseData }: Props) {
+
+export type CardRef = {
+  rotateArrow: () => void;
+  isExpanded: boolean;
+  changeCardSize: () => void;
+};
+
+export default function WorkoutExerciseCard({ exerciseData, ref, onCardFocus }: Props) {
+  useImperativeHandle(ref, () => ({
+    rotateArrow,
+    changeCardSize,
+    isExpanded,
+  }));
   const { setCount } = useExerciseCountContext();
   const { count: currentExerciseCount } = useExerciseCountContext();
   const setsNumber = exerciseData.sets.length;
@@ -37,6 +51,7 @@ export default function WorkoutExerciseCard({ exerciseData }: Props) {
       setCount((prev) => prev + 1);
     }
   }
+
   return (
     <Animated.View style={[styles.cardContainer, cardStyles, cardAnimatedStyle, isCurrentExercise && styles.currentExerciseCard]}>
       <View style={styles.headerWraper}>
@@ -56,8 +71,7 @@ export default function WorkoutExerciseCard({ exerciseData }: Props) {
           hitSlop={15}
           style={styles.arrowIcon}
           onPress={() => {
-            rotateArrow();
-            changeCardSize();
+            onCardFocus(exerciseData.orderIndex);
           }}
           disabled={isDisabled}
         >
@@ -106,7 +120,7 @@ export default function WorkoutExerciseCard({ exerciseData }: Props) {
         ))}
       </View>
 
-      <Pressable style={styles.nextSetButton} onPress={startNextSet}>
+      <Pressable style={[styles.nextSetButton, !isExpanded && { display: "none" }]} onPress={startNextSet}>
         <Text style={{ color: "white" }}>Finish Set</Text>
       </Pressable>
     </Animated.View>
@@ -120,6 +134,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     borderRadius: 10,
     margin: 10,
+    backgroundColor: "red",
   },
 
   currentExerciseCard: {

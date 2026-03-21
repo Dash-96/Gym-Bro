@@ -1,18 +1,18 @@
 import { useWorkoutStore } from "@/app/(tabs)/home/store/workoutStore";
 import { appStyle, fontStyles } from "@/app/constants/theme";
+import { useRouter } from "expo-router";
 import { MoveLeft } from "lucide-react-native";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function WorkoutHeader() {
   const workoutAlias = useWorkoutStore((s) => s.workout.workoutType);
-
   return (
     <View style={headerStyles.headerContainer}>
       <BackButton />
       <View style={{ flex: 1, alignItems: "center", gap: 4 }}>
         <Text style={headerStyles.workoutName}>{workoutAlias}</Text>
-        <Timer />
+        <StopWatch />
       </View>
       <FinishButton />
     </View>
@@ -28,14 +28,18 @@ function FinishButton() {
 }
 
 function BackButton() {
+  const router = useRouter();
+  function navigateBack() {
+    router.push("/(tabs)/home");
+  }
   return (
-    <Pressable style={({ pressed }) => [backButtonStyle.buttonContainer, pressed && { opacity: 0.7 }]}>
+    <Pressable style={({ pressed }) => [backButtonStyle.buttonContainer, pressed && { opacity: 0.7 }]} onPress={navigateBack}>
       <MoveLeft size={22} color={appStyle.colors.primaryColor} />
     </Pressable>
   );
 }
 
-function Timer() {
+function StopWatch() {
   const [startTime, setStartTime] = useState(new Date().getTime());
   const [timer, setTimer] = useState({ hours: "00", minutes: "00", seconds: "00" });
 

@@ -12,10 +12,10 @@ export default function WorkoutScreenHeader() {
 const styles = StyleSheet.create({
   headerContainer: {
     width: "100%",
-    position: "sticky",
+    position: "fixed",
     top: 0,
     backgroundColor: "white",
     padding: 20,
-    marginBottom: 20,
+    // marginBottom: 20,
   },
 });
