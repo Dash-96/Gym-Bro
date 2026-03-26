@@ -1,8 +1,8 @@
 import { useRef } from "react";
 import { StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useWorkoutStore } from "../../home/store/workoutStore";
-import WorkoutExerciseCard, { CardRef } from "../components/workoutExerciseCard";
+import { useWorkoutStore } from "@/app/stateStore/workoutStore/workoutStore";
+import WorkoutExerciseCard, { CardRef } from "./workoutExerciseCard";
 
 export default function WorkoutExerciseCardList() {
   const workoutExercises = useWorkoutStore((state) => state.workout).exercises;

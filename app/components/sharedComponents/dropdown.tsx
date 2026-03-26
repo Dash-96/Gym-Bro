@@ -2,8 +2,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useState } from "react";
 import { Pressable, SectionList, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
-import { useArrowRotate } from "../(tabs)/home/custom-hooks/editWorkoutHooks";
-import { appStyle, cardStyles, fontStyles } from "../constants/theme";
+import { useArrowRotate } from "@/app/hooks/homeHooks/editWorkoutHooks";
+import { appStyle, cardStyles, fontStyles } from "../../constants/theme";
 
 type DropDownProps<T> = {
   list: { title?: string; data: T[] }[];

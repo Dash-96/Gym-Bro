@@ -3,8 +3,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import Animated from "react-native-reanimated";
-import { useArrowRotate } from "../../custom-hooks/editWorkoutHooks";
-import { useWorkoutStore } from "../../store/workoutStore";
+import { useArrowRotate } from "@/app/hooks/homeHooks/editWorkoutHooks";
+import { useWorkoutStore } from "@/app/stateStore/workoutStore/workoutStore";
 
 export default function EditHeaderCard() {
   const updateWorkoutState = useWorkoutStore((state) => state.setWorkout);

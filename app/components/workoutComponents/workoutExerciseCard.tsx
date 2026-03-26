@@ -4,8 +4,8 @@ import { CircleCheckBig, Dot } from "lucide-react-native";
 import { Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
-import { useArrowRotate, useCardExpand } from "../../home/custom-hooks/editWorkoutHooks";
-import { Exercise } from "../../home/models/workoutModel";
+import { Exercise } from "@/app/models/workoutModel";
+import { useArrowRotate, useCardExpand } from "@/app/hooks/homeHooks/editWorkoutHooks";
 import { useExerciseCountContext } from "./excerciseCountContext";
 
 interface Props {

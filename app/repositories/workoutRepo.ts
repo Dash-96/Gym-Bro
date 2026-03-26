@@ -1,6 +1,7 @@
-import { Exercise, ExerciseMeta, Workout, Set as WorkoutSet } from "../(tabs)/home/models/workoutModel";
 import { db } from "../db/db";
-import { ExerciseMetaRow, ExerciseRow, SetRow, WorkoutRow, mapRowToExercise, mapRowToExerciseMeta, mapRowToWorkout } from "../db/mapper";
+import { ExerciseDbModel, ExerciseMetaDbModel, SetDbModel, WorkoutDbModel } from "../db/dbModels";
+import { mapExerciseMetaDbModelToModel, mapExerciseDbModelToModel, mapWorkoutDbModelToModel } from "../db/mapper";
+import { Exercise, ExerciseMeta, Workout, Set as WorkoutSet } from "../models/workoutModel";
 
 // Type-safe guards to ensure records have been persisted (have an id) before updates
 function assertWorkoutHasId(w: Workout): asserts w is Workout & { id: number } {
@@ -22,37 +23,79 @@ export async function insertWorkout(workout: Workout) {
     try {
       const wortoutStatement =
         await session.prepareAsync(`INSERT INTO workouts (user_id , workout_type , workout_alias , started_at , finished_at , notes , created_at , updated_at) 
-            VALUES($user_id, $workout_type, $workout_alias, $started_at, $finished_at, $notes, datetime('now'), datetime('now'))`);
+            VALUES(:user_id, :workout_type, :workout_alias, :started_at, :finished_at, :notes, datetime('now'), datetime('now'))`);
       let insertedWorkout = await wortoutStatement.executeAsync({
-        $user_id: 1,
-        $workout_type: workout.workoutType,
-        $workout_alias: workout.workoutAlias,
-        $started_at: null,
-        $finished_at: null,
-        $notes: workout.notes,
+        ":user_id": 1,
+        ":workout_type": workout.workoutType,
+        ":workout_alias": workout.workoutAlias,
+        ":started_at": null,
+        ":finished_at": null,
+        ":notes": workout.notes,
       });
       const workoutId = insertedWorkout.lastInsertRowId;
 
       const exerciseStatement = await session.prepareAsync(
-        `INSERT INTO workout_exercises (workout_id, exercise_key, excercise_name, order_index, created_at) VALUES($workout_id, $exercise_key, $excercise_name, $order_index, datetime('now'))`,
+        `INSERT INTO workout_exercises (workout_id, exercise_key, excercise_name, order_index, created_at) VALUES(:workout_id, :exercise_key, :excercise_name, :order_index, datetime('now'))`,
       );
 
       const setStatement = await session.prepareAsync(`INSERT INTO exercise_sets (workout_exercise_id, set_number, reps, weight, created_at) 
-        VALUES($workout_exercise_id, $set_number, $reps, $weight, datetime('now'))`);
+        VALUES(:workout_exercise_id, :set_number, :reps, :weight, datetime('now'))`);
       for (let exercise of workout.exercises) {
         let insertedExercise = await exerciseStatement.executeAsync({
-          $workout_id: workoutId,
-          $exercise_key: exercise.excerciseKey,
-          $excercise_name: exercise.excerciseName,
-          $order_index: exercise.orderIndex,
+          ":workout_id": workoutId,
+          ":exercise_key": exercise.excerciseKey,
+          ":excercise_name": exercise.excerciseName,
+          ":order_index": exercise.orderIndex,
         });
         for (let set of exercise.sets) {
           let insertedExerciseId = insertedExercise.lastInsertRowId;
           await setStatement.executeAsync({
-            $workout_exercise_id: insertedExerciseId,
-            $set_number: set.setNumber,
-            $reps: set.reps,
-            $weight: set.weight,
+            ":workout_exercise_id": insertedExerciseId,
+            ":set_number": set.setNumber,
+            ":reps": set.reps,
+            ":weight": set.weight,
+          });
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+}
+
+export async function updateWorkout(workout: Workout) {
+  const session = await db;
+  assertWorkoutHasId(workout);
+  await session.withTransactionAsync(async () => {
+    try {
+      const workoutStatement = await session.prepareAsync(
+        "UPDATE workouts SET workout_type = :workout_type, workout_alias = :workout_alias, notes = :notes, updated_at = datetime('now') WHERE id = :id",
+      );
+      await workoutStatement.executeAsync({
+        ":id": workout.id,
+        ":workout_type": workout.workoutType,
+        ":workout_alias": workout.workoutAlias,
+        ":notes": workout.notes,
+      });
+
+      const exerciseStatement = await session.prepareAsync(
+        "UPDATE workout_exercises SET exercise_key = :exercise_key, excercise_name = :excercise_name, order_index = :order_index WHERE id = :id",
+      );
+      const setStatement = await session.prepareAsync("UPDATE exercise_sets SET reps = :reps, weight = :weight WHERE id = :id");
+      for (const exercise of workout.exercises) {
+        assertExerciseHasId(exercise);
+        await exerciseStatement.executeAsync({
+          ":id": exercise.id,
+          ":exercise_key": exercise.excerciseKey,
+          ":excercise_name": exercise.excerciseName,
+          ":order_index": exercise.orderIndex,
+        });
+        for (const set of exercise.sets) {
+          assertSetHasId(set);
+          await setStatement.executeAsync({
+            ":id": set.id,
+            ":reps": set.reps,
+            ":weight": set.weight,
           });
         }
       }
@@ -68,12 +111,12 @@ export async function updateSets(exercise: Exercise) {
   assertExerciseHasId(exercise);
   await session.withTransactionAsync(async () => {
     try {
-      const updateStatement = await session.prepareAsync("UPDATE exercise_sets SET reps = $reps , weight = $weight WHERE workout_exercise_id = $exerciseId ");
+      const updateStatement = await session.prepareAsync("UPDATE exercise_sets SET reps = :reps , weight = :weight WHERE workout_exercise_id = :exerciseId ");
       for (let set of exercise.sets) {
         await updateStatement.executeAsync({
-          $exerciseId: exercise.id,
-          $reps: set.reps,
-          $weight: set.weight,
+          ":exerciseId": exercise.id,
+          ":reps": set.reps,
+          ":weight": set.weight,
         });
       }
     } catch (err) {
@@ -111,13 +154,13 @@ export async function getNextWorkout(): Promise<Workout | undefined> {
       FROM workouts w
       JOIN workout_exercises w_e ON w.id = w_e.workout_id
       JOIN exercise_sets e_s ON w_e.id = e_s.workout_exercise_id
-      WHERE w.finished_at IS NULL
+      WHERE w.finished_at IS NULL AND w.id = (SELECT MIN(id) FROM workouts WHERE finished_at IS NULL)
     `);
 
     if (rows.length === 0) return undefined;
 
     // Group flat JOIN rows into a map of exerciseId -> { row, sets[] }
-    const exerciseMap = new Map<number, { row: ExerciseRow; sets: SetRow[] }>();
+    const exerciseMap = new Map<number, { row: ExerciseDbModel; sets: SetDbModel[] }>();
     for (const r of rows) {
       if (!exerciseMap.has(r.exercise_id)) {
         exerciseMap.set(r.exercise_id, {
@@ -128,8 +171,8 @@ export async function getNextWorkout(): Promise<Workout | undefined> {
       exerciseMap.get(r.exercise_id)!.sets.push({ id: r.set_id, set_number: r.set_number, reps: r.reps, weight: r.weight });
     }
 
-    const exercises = Array.from(exerciseMap.values()).map(({ row, sets }) => mapRowToExercise(row, sets));
-    const workoutRow: WorkoutRow = {
+    const exercises = Array.from(exerciseMap.values()).map(({ row, sets }) => mapExerciseDbModelToModel(row, sets));
+    const workoutRow: WorkoutDbModel = {
       id: rows[0].workout_id,
       workout_type: rows[0].workout_type,
       workout_alias: rows[0].workout_alias,
@@ -138,7 +181,7 @@ export async function getNextWorkout(): Promise<Workout | undefined> {
       finished_at: rows[0].finished_at,
     };
 
-    return mapRowToWorkout(workoutRow, exercises);
+    return mapWorkoutDbModelToModel(workoutRow, exercises);
   } catch (err) {
     console.log(err);
   }
@@ -147,9 +190,9 @@ export async function getNextWorkout(): Promise<Workout | undefined> {
 // Fetches the exercise catalog (name, key, target muscle group) used to populate dropdowns
 export async function getExercisesMeta() {
   const session = await db;
-  const exercises = await session.getAllAsync<ExerciseMetaRow>("SELECT * FROM exercises");
+  const exercises = await session.getAllAsync<ExerciseMetaDbModel>("SELECT * FROM exercises");
   // console.log(exercises[0]);
   const exercisesResponse: ExerciseMeta[] = [];
-  exercises.forEach((exercise) => exercisesResponse.push(mapRowToExerciseMeta(exercise)));
+  exercises.forEach((exercise) => exercisesResponse.push(mapExerciseMetaDbModelToModel(exercise)));
   return exercisesResponse;
 }

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Workout } from "../models/workoutModel";
+import { Workout } from "../../models/workoutModel";
 
 const defaultWorkout: Workout = {
   id: 0,

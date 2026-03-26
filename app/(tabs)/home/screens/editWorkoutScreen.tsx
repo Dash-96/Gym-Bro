@@ -1,29 +1,39 @@
-import { useHiddenTabBar } from "@/app/appHooks/hooks";
+import { createWorkout } from "@/app/api/workoutAPI";
+import { CreateExercisePopup } from "@/app/components/homeComponents/editScreenComponents/createExercisePopup";
+import EditHeaderCard from "@/app/components/homeComponents/editScreenComponents/editHeaderCard";
+import ExerciseCardList from "@/app/components/homeComponents/editScreenComponents/exerciseCardList";
+import NoExerciseCard from "@/app/components/homeComponents/editScreenComponents/noExerciseCard";
+import NotesCard from "@/app/components/homeComponents/editScreenComponents/notesCard";
 import { appStyle, fontSizes, fontStyles } from "@/app/constants/theme";
-import { insertWorkout } from "@/app/repositories/workoutRepo";
+import { useHiddenTabBar } from "@/app/hooks/sharedHooks/hooks";
+import { insertWorkout, updateWorkout } from "@/app/repositories/workoutRepo";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useMutation } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, ToastAndroid } from "react-native";
-import { CreateExercisePopup } from "../components/editScreenComponents/createExercisePopup";
-import EditHeaderCard from "../components/editScreenComponents/editHeaderCard";
-import ExerciseCardList from "../components/editScreenComponents/exerciseCardList";
-import NoExerciseCard from "../components/editScreenComponents/noExerciseCard";
-import NotesCard from "../components/editScreenComponents/notesCard";
-import { useWorkoutStore } from "../store/workoutStore";
+import { useWorkoutStore } from "../../../stateStore/workoutStore/workoutStore";
 
 export default function EditWorkoutScreen() {
   const workoutData = useWorkoutStore((state) => state.workout);
+  const isExistingWorkout = workoutData.id ?? true;
   const hasExercises = (workoutData.exercises?.length ?? 0) > 0;
   const { workoutState } = useLocalSearchParams<{ workoutState: string }>();
   const [isModalVisible, setModalVisisble] = useState(false);
   useHiddenTabBar();
   const router = useRouter();
+  const workoutMutation = useMutation({ mutationKey: ["createWorkout"], mutationFn: createWorkout, retry: 3 });
 
   // Persists the workout to SQLite, shows a toast, then navigates back to home
-  function saveWorkout() {
-    insertWorkout(workoutData);
-    ToastAndroid.show("Your workout has been created", ToastAndroid.SHORT);
+  function saveWorkout(action: string) {
+    if (action == "save") {
+      insertWorkout(workoutData);
+      ToastAndroid.show("Your workout has been created", ToastAndroid.SHORT);
+      workoutMutation.mutate(workoutData);
+    } else if (action == "update") {
+      updateWorkout(workoutData);
+      workoutMutation.mutate(workoutData);
+    }
 
     setTimeout(() => {
       router.push("/home/screens/homeScreen");
@@ -32,7 +42,7 @@ export default function EditWorkoutScreen() {
 
   // console.log(`!!!!first item is: ${workoutData.workoutDetails[0].excerciseName} ||| second item is: ${workoutData.workoutDetails[1].excerciseName}`);
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === "android" ? 80 : 0}>
       <ScrollView style={styles.pageContainer} contentContainerStyle={styles.pageContainerContent} keyboardShouldPersistTaps="handled">
         <EditHeaderCard />
         {/* Show exercise list if exercises exist, otherwise show the empty state card */}
@@ -43,9 +53,11 @@ export default function EditWorkoutScreen() {
           <Text style={(fontStyles.semibold, { fontSize: fontSizes.buttonText, color: "white", fontWeight: "bold" })}>Add Exercise</Text>
         </Pressable>
         <NotesCard />
-        <Pressable style={styles.saveButton} onPress={saveWorkout}>
+        <Pressable style={styles.saveButton} onPress={() => saveWorkout(`${isExistingWorkout ? "update" : "save"}`)}>
           <AntDesign name="save" size={24} color="white" />
-          <Text style={(fontStyles.semibold, { fontSize: fontSizes.buttonText, color: "white", fontWeight: "bold" })}>Save Workout</Text>
+          <Text style={(fontStyles.semibold, { fontSize: fontSizes.buttonText, color: "white", fontWeight: "bold" })}>
+            {isExistingWorkout ? "Update Workout" : "Save Workout"}
+          </Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -60,7 +72,8 @@ const styles = StyleSheet.create({
   pageContainerContent: {
     alignItems: "center",
     paddingHorizontal: 10,
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
     gap: 20,
     flexGrow: 1,
   },

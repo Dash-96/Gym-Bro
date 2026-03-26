@@ -1,38 +1,18 @@
-import { Exercise, ExerciseMeta, Set, Workout } from "../(tabs)/home/models/workoutModel";
+/**
+ * mapper.ts
+ *
+ * Responsible for converting between raw SQLite DB models (snake_case, flat)
+ * and the UI/domain models (camelCase, nested) used throughout the app.
+ *
+ * DB models are defined in dbModels.ts and reflect the exact SQLite schema.
+ * UI models are defined in models/workoutModel.ts and are used in the store, repo, and components.
+ */
 
-// Raw DB row types (snake_case from SQLite)
-export type WorkoutRow = {
-  id: number;
-  workout_type: string;
-  workout_alias: string | null;
-  notes: string | null;
-  started_at: string | null;
-  finished_at: string | null;
-};
+import { Exercise, ExerciseMeta, Set, Workout } from "../models/workoutModel";
+import { ExerciseDbModel, ExerciseMetaDbModel, SetDbModel, WorkoutDbModel } from "./dbModels";
 
-export type ExerciseRow = {
-  id: number;
-  exercise_key: string;
-  excercise_name: string;
-  order_index: number;
-};
-
-export type SetRow = {
-  id: number;
-  set_number: number;
-  reps: number;
-  weight: number;
-};
-
-export type ExerciseMetaRow = {
-  id: number;
-  exercise_key: string;
-  exercise_name: string;
-  target_muscle_group: string;
-};
-
-// DB row -> DTO
-export function mapRowToSet(row: SetRow): Set {
+// DB model -> UI model
+export function mapSetDbModelToModel(row: SetDbModel): Set {
   return {
     id: row.id,
     setNumber: row.set_number,
@@ -41,17 +21,17 @@ export function mapRowToSet(row: SetRow): Set {
   };
 }
 
-export function mapRowToExercise(row: ExerciseRow, sets: SetRow[]): Exercise {
+export function mapExerciseDbModelToModel(row: ExerciseDbModel, sets: SetDbModel[]): Exercise {
   return {
     id: row.id,
     excerciseKey: row.exercise_key,
     excerciseName: row.excercise_name,
     orderIndex: row.order_index,
-    sets: sets.map(mapRowToSet),
+    sets: sets.map(mapSetDbModelToModel),
   };
 }
 
-export function mapRowToWorkout(row: WorkoutRow, exercises: Exercise[]): Workout {
+export function mapWorkoutDbModelToModel(row: WorkoutDbModel, exercises: Exercise[]): Workout {
   return {
     id: row.id,
     workoutType: row.workout_type,
@@ -63,7 +43,7 @@ export function mapRowToWorkout(row: WorkoutRow, exercises: Exercise[]): Workout
   };
 }
 
-export function mapRowToExerciseMeta(row: ExerciseMetaRow): ExerciseMeta {
+export function mapExerciseMetaDbModelToModel(row: ExerciseMetaDbModel): ExerciseMeta {
   return {
     id: row.id,
     exerciseKey: row.exercise_key,
@@ -72,39 +52,42 @@ export function mapRowToExerciseMeta(row: ExerciseMetaRow): ExerciseMeta {
   };
 }
 
-// DTO -> DB row (for inserts/updates)
-export function mapSetToRow(set: Set, workoutExerciseId: number): Omit<SetRow & { workout_exercise_id: number }, "id"> {
-  return {
-    workout_exercise_id: workoutExerciseId,
-    set_number: set.setNumber,
-    reps: set.reps,
-    weight: set.weight,
-  };
-}
+// UI model -> DB model
+// Currently unused — inserts/updates in workoutRepo.ts map fields inline in SQL calls.
+// Kept here in case a more structured approach is needed in the future.
 
-export function mapExerciseToRow(exercise: Exercise, workoutId: number): Omit<ExerciseRow & { workout_id: number }, "id"> {
-  return {
-    workout_id: workoutId,
-    exercise_key: exercise.excerciseKey,
-    excercise_name: exercise.excerciseName,
-    order_index: exercise.orderIndex,
-  };
-}
+// export function mapModelToSetDbModel(set: Set, workoutExerciseId: number): Omit<SetDbModel & { workout_exercise_id: number }, "id"> {
+//   return {
+//     workout_exercise_id: workoutExerciseId,
+//     set_number: set.setNumber,
+//     reps: set.reps,
+//     weight: set.weight,
+//   };
+// }
 
-export function mapExerciseMetaToRow(meta: ExerciseMeta): Omit<ExerciseMetaRow, "id"> {
-  return {
-    exercise_key: meta.exerciseKey,
-    exercise_name: meta.exerciseName,
-    target_muscle_group: meta.targetMuscleGroup,
-  };
-}
+// export function mapModelToExerciseDbModel(exercise: Exercise, workoutId: number): Omit<ExerciseDbModel & { workout_id: number }, "id"> {
+//   return {
+//     workout_id: workoutId,
+//     exercise_key: exercise.excerciseKey,
+//     excercise_name: exercise.excerciseName,
+//     order_index: exercise.orderIndex,
+//   };
+// }
 
-export function mapWorkoutToRow(workout: Workout): Omit<WorkoutRow, "id"> {
-  return {
-    workout_type: workout.workoutType,
-    workout_alias: workout.workoutAlias,
-    notes: workout.notes,
-    started_at: workout.startedAt ? workout.startedAt.toISOString() : null,
-    finished_at: workout.finishedAt ? workout.finishedAt.toISOString() : null,
-  };
-}
+// export function mapModelToExerciseMetaDbModel(meta: ExerciseMeta): Omit<ExerciseMetaDbModel, "id"> {
+//   return {
+//     exercise_key: meta.exerciseKey,
+//     exercise_name: meta.exerciseName,
+//     target_muscle_group: meta.targetMuscleGroup,
+//   };
+// }
+
+// export function mapModelToWorkoutDbModel(workout: Workout): Omit<WorkoutDbModel, "id"> {
+//   return {
+//     workout_type: workout.workoutType,
+//     workout_alias: workout.workoutAlias,
+//     notes: workout.notes,
+//     started_at: workout.startedAt ? workout.startedAt.toISOString() : null,
+//     finished_at: workout.finishedAt ? workout.finishedAt.toISOString() : null,
+//   };
+// }

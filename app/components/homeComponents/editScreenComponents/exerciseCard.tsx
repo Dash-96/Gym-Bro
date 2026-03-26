@@ -7,8 +7,8 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { GestureDetector, TextInput } from "react-native-gesture-handler";
 import Animated, { LinearTransition, SharedValue } from "react-native-reanimated";
-import { useArrowRotate, useCardExpand, useCardPan, useExerciseUpdate } from "../../custom-hooks/editWorkoutHooks";
-import { Exercise } from "../../models/workoutModel";
+import { Exercise } from "@/app/models/workoutModel";
+import { useArrowRotate, useCardExpand, useCardPan, useExerciseUpdate } from "@/app/hooks/homeHooks/editWorkoutHooks";
 
 // Props passed to ExerciseCard from the parent workout edit screen
 interface Props {

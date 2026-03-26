@@ -17,7 +17,13 @@ export default function RootLayout() {
   // Run CREATE TABLE IF NOT EXISTS migrations on every app start
   migrate();
   // React Query client for caching async state
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // gcTime: 1000 * 60 * 60 * 24,
+      },
+    },
+  });
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,

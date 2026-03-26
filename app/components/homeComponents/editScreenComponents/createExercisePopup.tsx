@@ -1,10 +1,10 @@
-import DropDown from "@/app/appComponents/dropdown";
+import DropDown from "@/app/components/sharedComponents/dropdown";
 import { appStyle, fontSizes, fontStyles } from "@/app/constants/theme";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, View } from "react-native";
-import { useEditSet, useExerciseDropDown } from "../../custom-hooks/editWorkoutHooks";
-import { Exercise, ExerciseMeta } from "../../models/workoutModel";
-import { useWorkoutStore } from "../../store/workoutStore";
+import { Exercise, ExerciseMeta } from "@/app/models/workoutModel";
+import { useEditSet, useExerciseDropDown } from "@/app/hooks/homeHooks/editWorkoutHooks";
+import { useWorkoutStore } from "@/app/stateStore/workoutStore/workoutStore";
 
 interface CreateExercisePopupProps {
   visible: boolean;
@@ -20,6 +20,7 @@ export function CreateExercisePopup({ visible, onClose }: CreateExercisePopupPro
   const { exercises } = useExerciseDropDown();
   const { sets, handleSetCountChange, handleSetChange } = useEditSet();
   const [selectedExercise, setSelectedExercise] = useState<ExerciseMeta>();
+  const excerciseCountRef = useRef(0);
   function handleExerciseSelect(exercise: ExerciseMeta) {
     setSelectedExercise(exercise);
   }

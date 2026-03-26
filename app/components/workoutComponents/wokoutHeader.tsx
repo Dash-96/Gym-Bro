@@ -1,5 +1,5 @@
-import { useWorkoutStore } from "@/app/(tabs)/home/store/workoutStore";
 import { appStyle, fontStyles } from "@/app/constants/theme";
+import { useWorkoutStore } from "@/app/stateStore/workoutStore/workoutStore";
 import { useRouter } from "expo-router";
 import { MoveLeft } from "lucide-react-native";
 import { useState } from "react";

@@ -3,7 +3,7 @@ import { Activity } from "lucide-react-native";
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { useWorkoutStore } from "../../home/store/workoutStore";
+import { useWorkoutStore } from "@/app/stateStore/workoutStore/workoutStore";
 import { useExerciseCountContext } from "./excerciseCountContext";
 
 export default function ProgressBar() {

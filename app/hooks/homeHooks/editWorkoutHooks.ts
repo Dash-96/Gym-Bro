@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { Gesture } from "react-native-gesture-handler";
 import { clamp, SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
-import { Exercise, ExerciseMeta } from "../models/workoutModel";
-import { useActiveCardStore, useWorkoutStore } from "../store/workoutStore";
+import { Exercise, ExerciseMeta } from "@/app/models/workoutModel";
+import { useActiveCardStore, useWorkoutStore } from "@/app/stateStore/workoutStore/workoutStore";
 
 //= This hook controls the expansion of the ExerciseCard component
 export function useCardExpand(setCount = 1, offset = 0) {

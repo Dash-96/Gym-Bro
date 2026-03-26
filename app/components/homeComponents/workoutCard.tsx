@@ -1,8 +1,8 @@
 import { appStyle, fontSizes, fontStyles } from "@/app/constants/theme";
 import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useCardType } from "../custom-hooks/editWorkoutHooks";
-import { useWorkoutStore } from "../store/workoutStore";
+import { useCardType } from "@/app/hooks/homeHooks/editWorkoutHooks";
+import { useWorkoutStore } from "@/app/stateStore/workoutStore/workoutStore";
 
 // Home screen card that shows either a "create workout" prompt or existing workout details
 // depending on whether an unfinished workout is found in the DB (workoutState: "create" | "edit")

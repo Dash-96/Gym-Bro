@@ -1,7 +1,7 @@
 import { appStyle, fontSizes, fontStyles } from "@/app/constants/theme";
 import { Redo2, Undo2 } from "lucide-react-native";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useTimerTicker } from "../customHooks/customHooks";
+import { useTimerTicker } from "@/app/hooks/workoutHooks/customHooks";
 
 interface timerProps {
   cutomRest?: string;

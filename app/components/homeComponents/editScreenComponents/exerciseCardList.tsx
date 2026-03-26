@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { Animated, StyleSheet } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
-import { useWorkoutStore } from "../../store/workoutStore";
+import { useWorkoutStore } from "@/app/stateStore/workoutStore/workoutStore";
 import ExerciseCard from "./exerciseCard";
 
 export default function ExerciseCardList() {
@@ -28,9 +28,11 @@ export default function ExerciseCardList() {
 
   return (
     <Animated.ScrollView style={styles.listContainer}>
-      {orderList.map((orderKey, index) => (
-        <ExerciseCard key={orderKey} index={index} excerciseData={exerciseIdMap.get(orderKey)} activeIndex={activeIndex} dragY={dragY} />
-      ))}
+      {orderList.map((orderKey, index) => {
+        const exerciseData = exerciseIdMap.get(orderKey);
+        if (!exerciseData) return null;
+        return <ExerciseCard key={orderKey} index={index} excerciseData={exerciseData} activeIndex={activeIndex} dragY={dragY} />;
+      })}
     </Animated.ScrollView>
   );
 }
