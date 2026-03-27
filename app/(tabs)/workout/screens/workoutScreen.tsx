@@ -1,4 +1,4 @@
-import { useHiddenTabBar } from "@/app/hooks/sharedHooks/hooks";
+import { useHiddenTabBar } from "@/app/hooks/sharedHooks/useHiddenTabBar";
 import { View } from "react-native";
 import ExerciseCountContext from "../components/excerciseCountContext";
 import WorkoutHeader from "../components/wokoutHeader";

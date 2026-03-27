@@ -5,7 +5,7 @@ import ExerciseCardList from "@/app/components/homeComponents/editScreenComponen
 import NoExerciseCard from "@/app/components/homeComponents/editScreenComponents/noExerciseCard";
 import NotesCard from "@/app/components/homeComponents/editScreenComponents/notesCard";
 import { appStyle, fontSizes, fontStyles } from "@/app/constants/theme";
-import { useHiddenTabBar } from "@/app/hooks/sharedHooks/hooks";
+import { useHiddenTabBar } from "@/app/hooks/sharedHooks/useHiddenTabBar";
 import { insertWorkout, updateWorkout } from "@/app/repositories/workoutRepo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useMutation } from "@tanstack/react-query";
