@@ -48,3 +48,4 @@ app-example
 # custom files and folders
 db_drizzle
 drizzle.config.ts
+.claude
