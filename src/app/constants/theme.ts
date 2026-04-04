@@ -13,6 +13,7 @@ export const appStyle = {
     cardBackground: "white",
     cardBorderColor: "#E2E8F0",
     cardShadow: "0px 1px 3px rgba(0,0,0,0.15)",
+    darkCardBackGround: "#F6F7FB",
   },
 
   text: {
@@ -28,6 +29,7 @@ export const cardStyles = {
   backgroundColor: appStyle.card.cardBackground,
   borderColor: appStyle.card.cardBorderColor,
   boxShadow: appStyle.card.cardShadow,
+  borderRadius: 10,
 };
 
 export const fontSizes = {

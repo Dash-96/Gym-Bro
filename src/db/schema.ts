@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS workouts (
 );
 
 
-CREATE TABLE IF NOT EXISTS workout_exercises (
+CREATE TABLE IF NOT EXISTS exercises (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     workout_id INTEGER,
     exercise_key varchar(255),
@@ -22,16 +22,16 @@ CREATE TABLE IF NOT EXISTS workout_exercises (
 ); 
 
   
-CREATE TABLE IF NOT EXISTS exercise_sets (
+CREATE TABLE IF NOT EXISTS sets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    workout_exercise_id INTEGER,
+    exercise_id INTEGER,
     set_number INTEGER,
     reps INTEGER,
     weight DECIMAL(5,2),
     created_at datetime DEFAULT CURRENT_TIMESTAMP
 ); 
 
-CREATE TABLE IF NOT EXISTS exercises(
+CREATE TABLE IF NOT EXISTS exercises_meta(
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 exercise_key varchar(255),
 exercise_name varchar(255),

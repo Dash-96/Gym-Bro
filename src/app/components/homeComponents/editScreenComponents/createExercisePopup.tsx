@@ -1,8 +1,9 @@
 import DropDown from "@/src/app/components/sharedComponents/dropdown";
 import { appStyle, fontSizes, fontStyles } from "@/src/app/constants/theme";
-import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { useEditSet, useExerciseDropDown } from "@/src/hooks/homeHooks/editWorkoutHooks";
 import { Exercise, ExerciseMeta } from "@/src/models/workoutModel";
+import { insertExercise } from "@/src/repositories/workoutRepo";
+import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import React, { useRef, useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, View } from "react-native";
 
@@ -14,6 +15,7 @@ interface CreateExercisePopupProps {
 }
 export function CreateExercisePopup({ visible, onClose }: CreateExercisePopupProps) {
   const workoutState = useWorkoutStore((state) => state.workout);
+  const isUpdatingWorkout = workoutState.id ?? false;
   const setWorkoutState = useWorkoutStore((state) => state.setWorkout);
   // const [excerciseKey, setExcerciseKey] = useState("");
   // const [excerciseName, setExcerciseName] = useState("");
@@ -32,8 +34,8 @@ export function CreateExercisePopup({ visible, onClose }: CreateExercisePopupPro
       return;
     }
     sets.forEach((set) => {
-      if (parseInt(set.reps) == 0 || parseInt(set.weight) == 0 || !set.reps || !set.weight) {
-        alert("Each set must have reps count and weight");
+      if (parseInt(set.reps) == 0 || !set.reps) {
+        alert("You have to to at least one set, come on...");
         return;
       }
     });
@@ -53,6 +55,10 @@ export function CreateExercisePopup({ visible, onClose }: CreateExercisePopupPro
     let updatedExerciseList = [...workoutState.exercises];
     updatedExerciseList.push(createdExercise);
     setWorkoutState({ exercises: updatedExerciseList });
+    /// Persisting to db upon creation if the workout already exists there , if not the exercise will be saved on workout insert;
+    if (isUpdatingWorkout) {
+      insertExercise([createdExercise], workoutState.id);
+    }
     ToastAndroid.show("Exercise Added", ToastAndroid.SHORT);
   };
 

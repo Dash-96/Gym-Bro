@@ -1,7 +1,7 @@
-import { Exercise, ExerciseMeta, Workout, Set as WorkoutSet } from "../models/workoutModel";
 import { db } from "../db/db";
 import { ExerciseDbModel, ExerciseMetaDbModel, SetDbModel, WorkoutDbModel } from "../db/dbModels";
 import { mapExerciseDbModelToModel, mapExerciseMetaDbModelToModel, mapWorkoutDbModelToModel } from "../db/mapper";
+import { Exercise, ExerciseMeta, Workout, Set as WorkoutSet } from "../models/workoutModel";
 
 // Type-safe guards to ensure records have been persisted (have an id) before updates
 function assertWorkoutHasId(w: Workout): asserts w is Workout & { id: number } {
@@ -34,35 +34,45 @@ export async function insertWorkout(workout: Workout) {
       });
       const workoutId = insertedWorkout.lastInsertRowId;
 
-      const exerciseStatement = await session.prepareAsync(
-        `INSERT INTO workout_exercises (workout_id, exercise_key, excercise_name, order_index, created_at) VALUES($workout_id, $exercise_key, $excercise_name, $order_index, datetime('now'))`,
-      );
-
-      const setStatement = await session.prepareAsync(`INSERT INTO exercise_sets (workout_exercise_id, set_number, reps, weight, created_at)
-        VALUES($workout_exercise_id, $set_number, $reps, $weight, datetime('now'))`);
-      for (let exercise of workout.exercises) {
-        let insertedExercise = await exerciseStatement.executeAsync({
-          $workout_id: workoutId,
-          $exercise_key: exercise.excerciseKey,
-          $excercise_name: exercise.excerciseName,
-          $order_index: exercise.orderIndex,
-        });
-        for (let set of exercise.sets) {
-          let insertedExerciseId = insertedExercise.lastInsertRowId;
-          await setStatement.executeAsync({
-            $workout_exercise_id: insertedExerciseId,
-            $set_number: set.setNumber,
-            $reps: set.reps,
-            $weight: set.weight,
-          });
-        }
-      }
+      insertExercise(workout.exercises, workoutId);
     } catch (err) {
       console.log(err);
     }
   });
 }
 
+export async function insertExercise(exercises: Exercise[], workoutId: number) {
+  const session = await db;
+  try {
+    const exerciseStatement = await session.prepareAsync(
+      `INSERT INTO exercises (workout_id, exercise_key, excercise_name, order_index, created_at) VALUES($workout_id, $exercise_key, $excercise_name, $order_index, datetime('now'))`,
+    );
+
+    const setStatement = await session.prepareAsync(`INSERT INTO sets (exercise_id, set_number, reps, weight, created_at)
+        VALUES($exercise_id, $set_number, $reps, $weight, datetime('now'))`);
+    for (let exercise of exercises) {
+      let insertedExercise = await exerciseStatement.executeAsync({
+        $workout_id: workoutId,
+        $exercise_key: exercise.excerciseKey,
+        $excercise_name: exercise.excerciseName,
+        $order_index: exercise.orderIndex,
+      });
+      for (let set of exercise.sets) {
+        let insertedExerciseId = insertedExercise.lastInsertRowId;
+        await setStatement.executeAsync({
+          $exercise_id: insertedExerciseId,
+          $set_number: set.setNumber,
+          $reps: set.reps,
+          $weight: set.weight,
+        });
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+//! TODO: Need to insert the new exercises when updating the workout
 export async function updateWorkout(workout: Workout) {
   const session = await db;
   assertWorkoutHasId(workout);
@@ -81,9 +91,9 @@ export async function updateWorkout(workout: Workout) {
       });
 
       const exerciseStatement = await session.prepareAsync(
-        "UPDATE workout_exercises SET exercise_key = $exercise_key, excercise_name = $excercise_name, order_index = $order_index WHERE id = $id",
+        "UPDATE exercises SET exercise_key = $exercise_key, excercise_name = $excercise_name, order_index = $order_index WHERE id = $id",
       );
-      const setStatement = await session.prepareAsync("UPDATE exercise_sets SET reps = $reps, weight = $weight WHERE id = $id");
+      const setStatement = await session.prepareAsync("UPDATE sets SET reps = $reps, weight = $weight WHERE id = $id");
       for (const exercise of workout.exercises) {
         assertExerciseHasId(exercise);
         await exerciseStatement.executeAsync({
@@ -113,7 +123,7 @@ export async function updateSets(exercise: Exercise) {
   assertExerciseHasId(exercise);
   await session.withTransactionAsync(async () => {
     try {
-      const updateStatement = await session.prepareAsync("UPDATE exercise_sets SET reps = $reps , weight = $weight WHERE workout_exercise_id = $exerciseId ");
+      const updateStatement = await session.prepareAsync("UPDATE sets SET reps = $reps , weight = $weight WHERE exercise_id = $exerciseId ");
       for (let set of exercise.sets) {
         await updateStatement.executeAsync({
           $exerciseId: exercise.id,
@@ -154,8 +164,8 @@ export async function getNextWorkout(): Promise<Workout | undefined> {
         w_e.id as exercise_id, w_e.exercise_key, w_e.excercise_name, w_e.order_index,
         e_s.id as set_id, e_s.set_number, e_s.reps, e_s.weight
       FROM workouts w
-      JOIN workout_exercises w_e ON w.id = w_e.workout_id
-      JOIN exercise_sets e_s ON w_e.id = e_s.workout_exercise_id
+      JOIN exercises w_e ON w.id = w_e.workout_id
+      JOIN sets e_s ON w_e.id = e_s.exercise_id
       WHERE w.finished_at IS NULL AND w.id = (SELECT MIN(id) FROM workouts WHERE finished_at IS NULL)
     `);
 
@@ -185,14 +195,14 @@ export async function getNextWorkout(): Promise<Workout | undefined> {
 
     return mapWorkoutDbModelToModel(workoutRow, exercises);
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 }
 
 // Fetches the exercise catalog (name, key, target muscle group) used to populate dropdowns
 export async function getExercisesMeta() {
   const session = await db;
-  const exercises = await session.getAllAsync<ExerciseMetaDbModel>("SELECT * FROM exercises");
+  const exercises = await session.getAllAsync<ExerciseMetaDbModel>("SELECT * FROM exercises_meta");
   // console.log(exercises[0]);
   const exercisesResponse: ExerciseMeta[] = [];
   exercises.forEach((exercise) => exercisesResponse.push(mapExerciseMetaDbModelToModel(exercise)));
@@ -201,8 +211,8 @@ export async function getExercisesMeta() {
 
 export async function getExcerciseProgress(exerciseKey: string): Promise<{ weight: number; createdAt: string }[]> {
   const session = await db;
-  const query = `SELECT MAX(s.weight) as weight , e."created_at" FROM workout_exercises e 
-                      JOIN exercise_sets s ON e.id = s.workout_exercise_id  
+  const query = `SELECT MAX(s.weight) as weight , e."created_at" FROM exercises e
+                      JOIN sets s ON e.id = s.exercise_id  
                       where exercise_key = $exerciseKey
                       GROUP BY e.id ORDER by e.created_at ASC`;
 

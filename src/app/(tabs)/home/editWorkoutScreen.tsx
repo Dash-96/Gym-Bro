@@ -36,7 +36,8 @@ export default function EditWorkoutScreen() {
     }
 
     setTimeout(() => {
-      router.push("/home");
+      // router.push("/home");
+      router.back();
     }, 500);
   }
 
