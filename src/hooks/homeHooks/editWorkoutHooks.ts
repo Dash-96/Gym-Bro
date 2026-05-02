@@ -1,25 +1,34 @@
-import { useActiveCardStore, useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { Exercise, ExerciseMeta } from "@/src/models/workoutModel";
 import { getExercisesMeta, getNextWorkout, updateSets } from "@/src/repositories/workoutRepo";
+import { useActiveCardStore, useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { useEffect, useState } from "react";
+import { LayoutChangeEvent } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
 import { clamp, SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 
 //= This hook controls the expansion of the ExerciseCard component
 export function useCardExpand(setCount = 1, offset = 0) {
-  const shrinkedSize = 50;
-  const expandedSize = 60 * setCount + shrinkedSize + offset;
+  const shrinkedSize = 60;
+  const expandedSize = 50 * setCount + shrinkedSize + offset;
   const [isExpanded, setIsExpanded] = useState(false);
+  const [messured, setMessured] = useState(0);
   const cardHeight = useSharedValue(shrinkedSize);
   const cardAnimatedStyle = useAnimatedStyle(() => ({
     height: cardHeight.value,
   }));
-  function changeCardSize() {
-    setIsExpanded((prev) => !prev);
-    cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? expandedSize : shrinkedSize, { duration: 100 });
+  function meassureExpandedHeight(event: LayoutChangeEvent) {
+    if (messured != 0) return;
+    const height = event.nativeEvent.layout.height;
+
+    setMessured(height);
   }
-  return { cardAnimatedStyle, changeCardSize, isExpanded };
+  function changeCardSize() {
+    if (messured === 0) return;
+    setIsExpanded((prev) => !prev);
+    cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? messured : shrinkedSize, { duration: 500 });
+  }
+  return { cardAnimatedStyle, changeCardSize, isExpanded, meassureExpandedHeight };
 }
 //= This hook controls the rotation of the arrow when pressed
 export function useArrowRotate() {
@@ -134,7 +143,7 @@ export function useCardType() {
   return { workoutState, workoutMetaData };
 }
 
-//= This hook preproccess the data before passing ot to the dropdoen component
+//= This hook preproccess the data before passing ot to the dropdown component
 export function useExerciseDropDown() {
   type DropDownItemData = { title: string; data: ExerciseMeta[] };
   const [exercises, setExercises] = useState<DropDownItemData[]>([]);
@@ -143,6 +152,7 @@ export function useExerciseDropDown() {
     (async () => {
       let data = await getExercisesMeta();
       let exerciseDropDownListData: DropDownItemData[] = [];
+      /// Sort the diffrent exercises by muscle group
       data.forEach((exerciseMeta) => {
         let index = exerciseDropDownListData.findIndex((item) => item.title == exerciseMeta.targetMuscleGroup);
         if (index == -1) {

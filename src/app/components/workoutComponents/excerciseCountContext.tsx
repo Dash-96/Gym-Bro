@@ -1,20 +1,23 @@
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 
-type CountContextType = {
+type WorkoutTrackerContext = {
   count: number;
   setCount: React.Dispatch<React.SetStateAction<number>>;
+  isStarted: boolean;
+  setISStarted: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const CountContext = createContext<CountContextType | undefined>(undefined);
+const WorkoutTracker = createContext<WorkoutTrackerContext | undefined>(undefined);
 
-export default function ExerciseCountContext({ children }: PropsWithChildren) {
+export default function WorkoutTrackerContext({ children }: PropsWithChildren) {
   const [exerciseCount, setExerciseCount] = useState(0);
+  const [isStarted, setISStarted] = useState(false);
 
-  return <CountContext.Provider value={{ count: exerciseCount, setCount: setExerciseCount }}>{children}</CountContext.Provider>;
+  return <WorkoutTracker.Provider value={{ count: exerciseCount, setCount: setExerciseCount, isStarted, setISStarted }}>{children}</WorkoutTracker.Provider>;
 }
 
-export function useExerciseCountContext() {
-  const context = useContext(CountContext);
+export function useWorkoutTrackerContext() {
+  const context = useContext(WorkoutTracker);
   if (!context) throw new Error("useExerciseCountContext must be used within ExerciseCountContext");
   return context;
 }

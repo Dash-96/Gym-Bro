@@ -4,7 +4,8 @@ import { StyleSheet, Text, View } from "react-native";
 import { appStyle, cardStyles, fontStyles } from "../../constants/theme";
 
 export default function QuickStatsCard() {
-  const { quickstats } = useQuickStats();
+  const quickstats = useQuickStats();
+  // console.log(quickstats);
   return (
     <View style={styles.sectionContainer}>
       <View style={styles.cardContainer}>
@@ -12,10 +13,12 @@ export default function QuickStatsCard() {
           <Dumbbell size={16} />
           <Text style={styles.title}>Workouts</Text>
         </View>
-        <Text style={styles.stat}>{quickstats?.workoutStats.currentAmount}</Text>
+        <Text style={styles.stat}>{quickstats?.workoutStats.value}</Text>
         <View style={styles.rowWraper}>
           {quickstats?.workoutStats.change == "up" ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-          <Text style={styles.change}>{`${quickstats?.workoutStats.percent}% ${quickstats?.workoutStats.change == "up" ? "more" : "less"} workouts`}</Text>
+          <Text
+            style={styles.change}
+          >{`${quickstats?.workoutStats.changePercent.toFixed(0)}% ${quickstats?.workoutStats.change == "up" ? "more" : "less"} workouts`}</Text>
         </View>
       </View>
 
@@ -24,10 +27,12 @@ export default function QuickStatsCard() {
           <Activity size={16} />
           <Text style={styles.title}>Total Sets</Text>
         </View>
-        <Text style={styles.stat}>the stat</Text>
+        <Text style={styles.stat}>{quickstats?.setsStats.value}</Text>
         <View style={styles.rowWraper}>
-          <TrendingUp size={16} />
-          <Text style={styles.change}>the change</Text>
+          {quickstats?.setsStats.change == "up" ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+          <Text
+            style={styles.change}
+          >{`${quickstats?.setsStats.changePercent.toFixed(0)}% ${quickstats?.setsStats.change == "up" ? "more" : "less"} sets`}</Text>
         </View>
       </View>
 
@@ -36,10 +41,12 @@ export default function QuickStatsCard() {
           <Flame size={16} />
           <Text style={styles.title}>Total Volume</Text>
         </View>
-        <Text style={styles.stat}>the stat</Text>
+        <Text style={styles.stat}>{quickstats?.volumeStats.value}</Text>
         <View style={styles.rowWraper}>
-          <TrendingUp size={16} />
-          <Text style={styles.change}>the change</Text>
+          {quickstats?.volumeStats.change == "up" ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+          <Text
+            style={styles.change}
+          >{`${quickstats?.volumeStats.changePercent.toFixed(0)}% ${quickstats?.volumeStats.change == "up" ? "more" : "less"} volume`}</Text>
         </View>
       </View>
 
@@ -86,6 +93,7 @@ const styles = StyleSheet.create({
   stat: {
     ...fontStyles.semibold,
     fontSize: 30,
+    alignSelf: "center",
   },
   change: {
     color: appStyle.colors.primaryColor,

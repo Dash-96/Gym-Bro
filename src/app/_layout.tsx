@@ -19,13 +19,18 @@ export default function RootLayout() {
     <GestureHandlerRootView>
       <PersistQueryClientProvider
         client={queryClient}
-        persistOptions={{ persister }}
+        persistOptions={{
+          persister,
+          maxAge: 1000 * 60 * 60 * 24,
+          dehydrateOptions: { shouldDehydrateMutation: (m) => m.state.isPaused || m.state.status === "error" },
+        }}
         onSuccess={() => {
           queryClient.resumePausedMutations();
         }}
       >
         <Stack screenOptions={{ contentStyle: { backgroundColor: appStyle.colors.pageBg } }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         </Stack>
       </PersistQueryClientProvider>
     </GestureHandlerRootView>

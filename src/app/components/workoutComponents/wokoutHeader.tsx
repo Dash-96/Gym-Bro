@@ -1,33 +1,33 @@
 import { appStyle, fontStyles } from "@/src/app/constants/theme";
-import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { updateWorkout } from "@/src/repositories/workoutRepo";
+import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { useRouter } from "expo-router";
 import { MoveLeft } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useExerciseCountContext } from "./excerciseCountContext";
+import { useWorkoutTrackerContext } from "./excerciseCountContext";
 
 export default function WorkoutHeader() {
-  const { count: exerciseCount } = useExerciseCountContext();
+  const { count: exerciseCount } = useWorkoutTrackerContext();
   const setWorkoutState = useWorkoutStore((state) => state.setWorkout);
   const workoutState = useWorkoutStore((state) => state.workout);
   const workoutAlias = workoutState.workoutAlias;
   const excercises = workoutState.exercises;
+  const router = useRouter();
   useEffect(() => {
-    if (exerciseCount == 0) {
-      const startedAt = new Date();
-      const tempWorkoutState = { ...workoutState };
-      tempWorkoutState.startedAt = startedAt;
-      setWorkoutState({ startedAt: startedAt });
-      updateWorkout(tempWorkoutState);
-    } else if (exerciseCount == excercises.length) {
-      const startedAt = new Date();
-      const tempWorkoutState = { ...workoutState };
-      tempWorkoutState.finishedAt = startedAt;
-      setWorkoutState({ finishedAt: startedAt });
-      updateWorkout(tempWorkoutState);
+    if (exerciseCount == excercises.length) {
+      finishWorkout();
     }
   }, [exerciseCount]);
+
+  function finishWorkout() {
+    const finishTime = new Date();
+    const tempWorkoutState = { ...workoutState };
+    tempWorkoutState.finishedAt = finishTime;
+    setWorkoutState({ finishedAt: finishTime });
+    updateWorkout(tempWorkoutState);
+    router.replace("/(tabs)/home/homeScreen");
+  }
 
   return (
     <View style={headerStyles.headerContainer}>
@@ -39,20 +39,20 @@ export default function WorkoutHeader() {
       <FinishButton />
     </View>
   );
-}
 
-function FinishButton() {
-  return (
-    <Pressable style={({ pressed }) => [finishButtonStyle.finishButtonContainer, pressed && { opacity: 0.8 }]}>
-      <Text style={finishButtonStyle.finishButtonText}>Finish</Text>
-    </Pressable>
-  );
+  function FinishButton() {
+    return (
+      <Pressable onPress={finishWorkout} style={({ pressed }) => [finishButtonStyle.finishButtonContainer, pressed && { opacity: 0.8 }]}>
+        <Text style={finishButtonStyle.finishButtonText}>Finish</Text>
+      </Pressable>
+    );
+  }
 }
 
 function BackButton() {
   const router = useRouter();
   function navigateBack() {
-    router.push("/(tabs)/home");
+    router.replace("/(tabs)/home");
   }
   return (
     <Pressable style={({ pressed }) => [backButtonStyle.buttonContainer, pressed && { opacity: 0.7 }]} onPress={navigateBack}>

@@ -18,6 +18,7 @@ export const appStyle = {
 
   text: {
     textColor: "#0F172A",
+    lightColor: "white",
     mutedTextColor: "#64748b8e",
     secondaryTextColor: "#475569",
   },

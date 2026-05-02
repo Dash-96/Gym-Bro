@@ -16,16 +16,25 @@ export async function getWorkouts() {
 }
 
 export async function createWorkout(workout: Workout) {
-  console.log("trying");
-  const createWorkoutDto = mapToCreateWorkoutDto(workout);
-  let response = await fetch(apiUrl + "/workout", {
-    method: "POST",
-    body: JSON.stringify(createWorkoutDto),
-    headers: {
-      "Content-type": "application/json",
-    },
-  });
-  console.log(response.status);
-  let data = await response.json();
-  console.log(data);
+  try {
+    console.log("trying");
+    const abortConteroller = new AbortController();
+    setTimeout(() => {
+      abortConteroller.abort();
+    }, 10000);
+    const createWorkoutDto = mapToCreateWorkoutDto(workout);
+    let response = await fetch(apiUrl + "/workout", {
+      method: "POST",
+      body: JSON.stringify(createWorkoutDto),
+      headers: {
+        "Content-type": "application/json",
+      },
+      signal: abortConteroller.signal,
+    });
+    console.log(response.status);
+    let data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
 }

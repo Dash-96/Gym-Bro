@@ -1,13 +1,13 @@
 import { appStyle, fontSizes, fontStyles } from "@/src/app/constants/theme";
+import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { Activity } from "lucide-react-native";
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
-import { useExerciseCountContext } from "./excerciseCountContext";
+import { useWorkoutTrackerContext } from "./excerciseCountContext";
 
 export default function ProgressBar() {
-  const { count: current } = useExerciseCountContext();
+  const { count: current } = useWorkoutTrackerContext();
   const total = useWorkoutStore((state) => state.workout.exercises.length);
   const progress = useSharedValue(0);
   const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
@@ -40,6 +40,10 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     gap: 8,
+    position: "fixed",
+    top: 0,
+    backgroundColor: "white",
+    padding: 20,
   },
   infoRow: {
     flexDirection: "row",

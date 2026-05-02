@@ -1,10 +1,19 @@
-import { View } from "react-native";
+import { StyleSheet } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import ExerciseProgress from "../../components/statsComponents/exerciseProgress";
 import QuickStatsCard from "../../components/statsComponents/quickStatsCard";
 
 export default function StatsScreen() {
   return (
-    <View>
+    <ScrollView contentContainerStyle={{ alignItems: "center" }}>
       <QuickStatsCard />
-    </View>
+      <ExerciseProgress />
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  screenContainer: {
+    alignItems: "center",
+  },
+});

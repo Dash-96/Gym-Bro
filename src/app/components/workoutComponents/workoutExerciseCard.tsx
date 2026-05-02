@@ -6,7 +6,7 @@ import { CircleCheckBig, Dot } from "lucide-react-native";
 import { Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
-import { useExerciseCountContext } from "./excerciseCountContext";
+import { useWorkoutTrackerContext } from "./excerciseCountContext";
 
 interface Props {
   exerciseData: Exercise;
@@ -21,15 +21,10 @@ export type CardRef = {
 };
 
 export default function WorkoutExerciseCard({ exerciseData, ref, onCardFocus }: Props) {
-  useImperativeHandle(ref, () => ({
-    rotateArrow,
-    changeCardSize,
-    isExpanded,
-  }));
-  const { setCount } = useExerciseCountContext();
-  const { count: currentExerciseCount } = useExerciseCountContext();
+  const { setCount } = useWorkoutTrackerContext();
+  const { count: currentExerciseCount } = useWorkoutTrackerContext();
   const setsNumber = exerciseData.sets.length;
-  const { cardAnimatedStyle, changeCardSize, isExpanded } = useCardExpand(setsNumber, 30);
+  const { cardAnimatedStyle, changeCardSize, isExpanded, meassureExpandedHeight } = useCardExpand(setsNumber, 60);
   const { arrowRotateStyle, rotateArrow, isDisabled } = useArrowRotate();
   const [currentSet, updateCurrentSet] = useState(0);
   const isCompleted = useRef(false);
@@ -41,6 +36,17 @@ export default function WorkoutExerciseCard({ exerciseData, ref, onCardFocus }: 
       changeCardSize();
     }
   }, [isCurrentExercise]);
+
+  /// Creates a ref to expose functions that the parent can invoke
+  useImperativeHandle(
+    ref,
+    () => ({
+      rotateArrow,
+      changeCardSize,
+      isExpanded,
+    }),
+    [isExpanded],
+  );
 
   // Advances to the next set; fires onExerciseComplete once all sets are done (guarded by ref to prevent double-firing)
   function startNextSet() {
@@ -54,75 +60,81 @@ export default function WorkoutExerciseCard({ exerciseData, ref, onCardFocus }: 
 
   return (
     <Animated.View style={[styles.cardContainer, cardStyles, cardAnimatedStyle, isCurrentExercise && styles.currentExerciseCard]}>
-      <View style={styles.headerWraper}>
-        <View style={styles.exerciseNameCol}>
-          <Text style={styles.exerciseName}>{exerciseData.excerciseName}</Text>
-        </View>
-        {/* Set counter */}
-        <View style={styles.setCounterColumn}>
-          <Dot size={24} color={"black"} />
-          <View style={styles.setCounter}>
-            <Text style={styles.setCounterText}>{currentSet}/</Text>
-            <Text style={styles.setCounterText}>{setsNumber}</Text>
+      <View
+        onLayout={(event) => {
+          meassureExpandedHeight(event);
+        }}
+      >
+        <View style={styles.headerWraper}>
+          <View style={styles.exerciseNameCol}>
+            <Text style={styles.exerciseName}>{exerciseData.excerciseName}</Text>
           </View>
-          <CircleCheckBig size={18} color={currentSet == setsNumber ? "green" : "gray"} />
-        </View>
-        <Pressable
-          hitSlop={15}
-          style={styles.arrowIcon}
-          onPress={() => {
-            onCardFocus(exerciseData.orderIndex);
-          }}
-          disabled={isDisabled}
-        >
-          <Animated.View style={arrowRotateStyle}>
-            <AntDesign name="down" size={18} color="black" />
-          </Animated.View>
-        </Pressable>
-      </View>
-
-      <View style={[styles.bodyWraper, { display: isExpanded ? "flex" : "none" }]}>
-        <View style={styles.row}>
-          <View style={styles.columnSet}>
-            <Text style={styles.columnHeader}>Set</Text>
+          {/* Set counter */}
+          <View style={styles.setCounterColumn}>
+            <Dot size={24} color={"black"} />
+            <View style={styles.setCounter}>
+              <Text style={styles.setCounterText}>{currentSet}/</Text>
+              <Text style={styles.setCounterText}>{setsNumber}</Text>
+            </View>
+            <CircleCheckBig size={18} color={currentSet == setsNumber ? "green" : "gray"} />
           </View>
-          <View style={styles.columnReps}>
-            <Text style={styles.columnHeader}>Reps</Text>
-          </View>
-          <View style={styles.columnWeight}>
-            <Text style={styles.columnHeader}>Weight (kg)</Text>
-          </View>
-          <View style={styles.columnStatus}>
-            <Text style={styles.columnHeader}>Status</Text>
-          </View>
-        </View>
-        {/* Active set gets an orange shadow; completed sets get a blue shadow */}
-        {exerciseData.sets.map((setData) => (
-          <View
-            key={setData.id}
-            style={[styles.setRow, setData.setNumber - 1 == currentSet ? styles.activeSet : setData.setNumber - 1 < currentSet ? styles.completedSet : ""]}
+          <Pressable
+            hitSlop={15}
+            style={[styles.arrowIcon, isCurrentExercise && { transform: [{ rotateZ: "180deg" }] }]}
+            onPress={() => {
+              onCardFocus(exerciseData.orderIndex);
+            }}
+            disabled={isDisabled}
           >
+            <Animated.View style={arrowRotateStyle}>
+              <AntDesign name="down" size={18} color="black" />
+            </Animated.View>
+          </Pressable>
+        </View>
+
+        <View style={[styles.bodyWraper]}>
+          <View style={styles.row}>
             <View style={styles.columnSet}>
-              <Text style={styles.cellText}>{setData.setNumber}</Text>
+              <Text style={styles.columnHeader}>Set</Text>
             </View>
             <View style={styles.columnReps}>
-              <Text style={styles.cellText}>{setData.reps}</Text>
+              <Text style={styles.columnHeader}>Reps</Text>
             </View>
             <View style={styles.columnWeight}>
-              <Text style={styles.cellText} numberOfLines={1}>
-                {setData.weight}
-              </Text>
+              <Text style={styles.columnHeader}>Weight (kg)</Text>
             </View>
             <View style={styles.columnStatus}>
-              <CircleCheckBig size={18} color={setData.setNumber - 1 < currentSet ? "green" : "gray"} />
+              <Text style={styles.columnHeader}>Status</Text>
             </View>
           </View>
-        ))}
-      </View>
+          {/* Active set gets an orange shadow; completed sets get a blue shadow */}
+          {exerciseData.sets.map((setData) => (
+            <View
+              key={setData.id}
+              style={[styles.setRow, setData.setNumber - 1 == currentSet ? styles.activeSet : setData.setNumber - 1 < currentSet ? styles.completedSet : ""]}
+            >
+              <View style={styles.columnSet}>
+                <Text style={styles.cellText}>{setData.setNumber}</Text>
+              </View>
+              <View style={styles.columnReps}>
+                <Text style={styles.cellText}>{setData.reps}</Text>
+              </View>
+              <View style={styles.columnWeight}>
+                <Text style={styles.cellText} numberOfLines={1}>
+                  {setData.weight}
+                </Text>
+              </View>
+              <View style={styles.columnStatus}>
+                <CircleCheckBig size={18} color={setData.setNumber - 1 < currentSet ? "green" : "gray"} />
+              </View>
+            </View>
+          ))}
+        </View>
 
-      <Pressable style={[styles.nextSetButton, !isExpanded && { display: "none" }]} onPress={startNextSet}>
-        <Text style={{ color: "white" }}>Finish Set</Text>
-      </Pressable>
+        <Pressable style={[styles.nextSetButton]} onPress={startNextSet}>
+          <Text style={{ color: "white" }}>Finish Set</Text>
+        </Pressable>
+      </View>
     </Animated.View>
   );
 }
@@ -135,6 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 10,
     backgroundColor: "red",
+    overflow: "hidden",
   },
 
   currentExerciseCard: {
@@ -151,7 +164,6 @@ const styles = StyleSheet.create({
 
   headerWraper: {
     flexDirection: "row",
-
     height: 60,
     alignItems: "center",
   },

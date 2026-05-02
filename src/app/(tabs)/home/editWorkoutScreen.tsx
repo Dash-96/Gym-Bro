@@ -32,12 +32,12 @@ export default function EditWorkoutScreen() {
       workoutMutation.mutate(workoutData);
     } else if (action == "update") {
       updateWorkout(workoutData);
-      // workoutMutation.mutate(workoutData);
+      workoutMutation.mutate(workoutData);
     }
 
     setTimeout(() => {
       // router.push("/home");
-      router.back();
+      router.replace("/(tabs)/home/homeScreen");
     }, 500);
   }
 

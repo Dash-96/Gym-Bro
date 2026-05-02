@@ -72,7 +72,6 @@ export async function insertExercise(exercises: Exercise[], workoutId: number) {
   }
 }
 
-//! TODO: Need to insert the new exercises when updating the workout
 export async function updateWorkout(workout: Workout) {
   const session = await db;
   assertWorkoutHasId(workout);
@@ -207,27 +206,4 @@ export async function getExercisesMeta() {
   const exercisesResponse: ExerciseMeta[] = [];
   exercises.forEach((exercise) => exercisesResponse.push(mapExerciseMetaDbModelToModel(exercise)));
   return exercisesResponse;
-}
-
-export async function getExcerciseProgress(exerciseKey: string): Promise<{ weight: number; createdAt: string }[]> {
-  const session = await db;
-  const query = `SELECT MAX(s.weight) as weight , e."created_at" FROM exercises e
-                      JOIN sets s ON e.id = s.exercise_id  
-                      where exercise_key = $exerciseKey
-                      GROUP BY e.id ORDER by e.created_at ASC`;
-
-  try {
-    const statment = await session.prepareAsync(query);
-    const result = await statment.executeAsync<{ weight: number; created_at: string }>({
-      $exerciseKey: exerciseKey,
-    });
-    const setsResult = await result.getAllAsync();
-    //= map the db object to UI object due to name convention diffrences
-    const sets = setsResult.map((resultEntry) => ({ weight: resultEntry.weight, createdAt: resultEntry.created_at }));
-    // console.log(sets);
-    return sets;
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
 }

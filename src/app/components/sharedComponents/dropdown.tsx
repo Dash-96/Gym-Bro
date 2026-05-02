@@ -1,7 +1,7 @@
 import { useArrowRotate } from "@/src/hooks/homeHooks/editWorkoutHooks";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useState } from "react";
-import { Pressable, SectionList, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { appStyle, cardStyles, fontStyles } from "../../constants/theme";
 
@@ -38,27 +38,33 @@ export default function DropDown<T>({ list, getKey, getValue, withCategory, onSe
         </View>
       </Pressable>
 
-      <SectionList
+      <ScrollView
+        nestedScrollEnabled
         style={[styles.dropdownContainer, cardStyles, { display: isVisible ? "flex" : "none" }]}
-        sections={list}
-        SectionSeparatorComponent={() => <View style={styles.sectionSeprator}></View>}
-        ItemSeparatorComponent={() => <View style={styles.itemSeprator}></View>}
-        renderItem={({ item }) => (
-          <Pressable
-            style={styles.dropDownItem}
-            onPress={() => {
-              onSelect(item);
-              setSelectedValue(getValue(item));
-              rotateArrow();
-              setIsVisible(false);
-            }}
-          >
-            <Text style={[fontStyles.regular, styles.sectionText]}>{getValue(item)}</Text>
-          </Pressable>
-        )}
-        keyExtractor={(item) => getKey(item).toString()}
-        renderSectionHeader={({ section: { title } }) => <Text style={[fontStyles.semibold, styles.sectionHeader]}>{title ?? ""}</Text>}
-      />
+      >
+        {list.map((section, sectionIndex) => (
+          <View key={section.title ?? sectionIndex}>
+            {section.title && <Text style={[fontStyles.semibold, styles.sectionHeader]}>{section.title}</Text>}
+            {sectionIndex > 0 && <View style={styles.sectionSeprator} />}
+            {section.data.map((item, itemIndex) => (
+              <View key={getKey(item).toString()}>
+                {itemIndex > 0 && <View style={styles.itemSeprator} />}
+                <Pressable
+                  style={styles.dropDownItem}
+                  onPress={() => {
+                    onSelect(item);
+                    setSelectedValue(getValue(item));
+                    rotateArrow();
+                    setIsVisible(false);
+                  }}
+                >
+                  <Text style={[fontStyles.regular, styles.sectionText]}>{getValue(item)}</Text>
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }

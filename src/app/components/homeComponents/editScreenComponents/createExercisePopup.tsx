@@ -57,9 +57,12 @@ export function CreateExercisePopup({ visible, onClose }: CreateExercisePopupPro
     setWorkoutState({ exercises: updatedExerciseList });
     /// Persisting to db upon creation if the workout already exists there , if not the exercise will be saved on workout insert;
     if (isUpdatingWorkout) {
-      insertExercise([createdExercise], workoutState.id);
+      if (workoutState.id) {
+        insertExercise([createdExercise], workoutState.id);
+      }
     }
     ToastAndroid.show("Exercise Added", ToastAndroid.SHORT);
+    onClose();
   };
 
   return (

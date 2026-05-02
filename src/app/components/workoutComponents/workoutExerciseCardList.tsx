@@ -1,23 +1,25 @@
+import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { useRef } from "react";
 import { StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import WorkoutExerciseCard, { CardRef } from "./workoutExerciseCard";
 
 export default function WorkoutExerciseCardList() {
   const workoutExercises = useWorkoutStore((state) => state.workout).exercises;
   const cardsRefs = useRef<CardRef[]>([]);
 
-  function focusCard(cardIndex: number) {
+  function focusCard(cardOrder: number) {
     cardsRefs.current.forEach((cardRef, index) => {
-      if (cardRef.isExpanded && index !== cardIndex - 1) {
+      /// Close any other open card
+      console.log(`card number ${index + 1} , expanded: ${cardRef.isExpanded}`);
+      if (cardRef.isExpanded && index !== cardOrder - 1) {
         cardRef.rotateArrow();
         cardRef.changeCardSize();
       }
-
-      cardsRefs.current[cardIndex - 1].rotateArrow();
-      cardsRefs.current[cardIndex - 1].changeCardSize();
     });
+
+    cardsRefs.current[cardOrder - 1].rotateArrow();
+    cardsRefs.current[cardOrder - 1].changeCardSize();
   }
   return (
     <ScrollView style={styles.listConatiner} contentContainerStyle={{ alignItems: "center", gap: 10 }}>
