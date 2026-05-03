@@ -35,6 +35,6 @@ export async function createWorkout(workout: Workout) {
     let data = await response.json();
     console.log(data);
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }

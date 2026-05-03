@@ -14,6 +14,7 @@ const defaultWorkout: Workout = {
 type workoutStore = {
   workout: Workout;
   setWorkout: (p: Partial<Workout>) => void;
+  resetWorkout: () => void;
   exerciseOrderList: number[];
   setExerciseOrderList: (list: number[]) => void;
   reorder: (destinationIndex: number, cardIndex: number) => void;
@@ -25,6 +26,9 @@ export const useWorkoutStore = create<workoutStore>((set) => ({
   exerciseOrderList: [],
   setWorkout: (properties: Partial<Workout>) => {
     set((state) => ({ workout: { ...state.workout, ...properties } }));
+  },
+  resetWorkout: () => {
+    set({ workout: defaultWorkout });
   },
 
   setExerciseOrderList: (list: number[]) => {

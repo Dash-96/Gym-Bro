@@ -10,23 +10,24 @@ import { useWorkoutTrackerContext } from "./excerciseCountContext";
 export default function WorkoutHeader() {
   const { count: exerciseCount } = useWorkoutTrackerContext();
   const setWorkoutState = useWorkoutStore((state) => state.setWorkout);
+  const resetWorkoutState = useWorkoutStore((state) => state.resetWorkout);
   const workoutState = useWorkoutStore((state) => state.workout);
   const workoutAlias = workoutState.workoutAlias;
   const excercises = workoutState.exercises;
   const router = useRouter();
   useEffect(() => {
-    if (exerciseCount == excercises.length) {
+    if (excercises.length > 0 && exerciseCount === excercises.length) {
       finishWorkout();
     }
   }, [exerciseCount]);
 
-  function finishWorkout() {
+  async function finishWorkout() {
     const finishTime = new Date();
     const tempWorkoutState = { ...workoutState };
     tempWorkoutState.finishedAt = finishTime;
-    setWorkoutState({ finishedAt: finishTime });
-    updateWorkout(tempWorkoutState);
-    router.replace("/(tabs)/home/homeScreen");
+    await updateWorkout(tempWorkoutState);
+    resetWorkoutState();
+    router.replace("/(tabs)/home");
   }
 
   return (

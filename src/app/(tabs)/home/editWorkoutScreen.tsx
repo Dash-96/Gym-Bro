@@ -16,6 +16,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text
 
 export default function EditWorkoutScreen() {
   const workoutData = useWorkoutStore((state) => state.workout);
+  const setWorkoutState = useWorkoutStore((state) => state.setWorkout);
   const isExistingWorkout = workoutData.id ?? true;
   const hasExercises = (workoutData.exercises?.length ?? 0) > 0;
   const { workoutState } = useLocalSearchParams<{ workoutState: string }>();
@@ -25,21 +26,32 @@ export default function EditWorkoutScreen() {
   const workoutMutation = useMutation({ mutationKey: ["createWorkout"], mutationFn: createWorkout, retry: 3 });
 
   // Persists the workout to SQLite, shows a toast, then navigates back to home
-  function saveWorkout(action: string) {
+  async function saveWorkout(action: string) {
     if (action == "save") {
-      insertWorkout(workoutData);
-      ToastAndroid.show("Your workout has been created", ToastAndroid.SHORT);
-      workoutMutation.mutate(workoutData);
+      let workoutId = await insertWorkout(workoutData);
+      if (workoutId) {
+        setWorkoutState({ id: workoutId });
+        ToastAndroid.show("Your workout has been created", ToastAndroid.SHORT);
+      } else {
+        ToastAndroid.show("Oops... workout wasnt created, please try again", ToastAndroid.SHORT);
+        return;
+      }
+      router.back();
+      // workoutMutation.mutate(workoutData);
     } else if (action == "update") {
-      updateWorkout(workoutData);
-      workoutMutation.mutate(workoutData);
+      try {
+        updateWorkout(workoutData);
+        ToastAndroid.show("Your workout has been created", ToastAndroid.SHORT);
+        router.back();
+      } catch (error) {
+        ToastAndroid.show("Oops... workout wasnt created, please try again", ToastAndroid.SHORT);
+        return;
+      }
+      // workoutMutation.mutate(workoutData);
     }
-
-    setTimeout(() => {
-      // router.push("/home");
-      router.replace("/(tabs)/home/homeScreen");
-    }, 500);
   }
+
+  console.log(workoutData.id);
 
   // console.log(`!!!!first item is: ${workoutData.workoutDetails[0].excerciseName} ||| second item is: ${workoutData.workoutDetails[1].excerciseName}`);
   return (

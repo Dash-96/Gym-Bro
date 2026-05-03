@@ -19,6 +19,7 @@ function assertSetHasId(s: WorkoutSet): asserts s is WorkoutSet & { id: number }
 // Inserts a full workout with all its exercises and sets in a single transaction
 export async function insertWorkout(workout: Workout) {
   const session = await db;
+  let id = 0;
   await session.withTransactionAsync(async () => {
     try {
       const wortoutStatement =
@@ -33,12 +34,14 @@ export async function insertWorkout(workout: Workout) {
         $notes: workout.notes,
       });
       const workoutId = insertedWorkout.lastInsertRowId;
+      id = workoutId;
 
-      insertExercise(workout.exercises, workoutId);
+      await insertExercise(workout.exercises, workoutId);
     } catch (err) {
       console.log(err);
     }
   });
+  return id;
 }
 
 export async function insertExercise(exercises: Exercise[], workoutId: number) {
@@ -69,6 +72,7 @@ export async function insertExercise(exercises: Exercise[], workoutId: number) {
     }
   } catch (err) {
     console.error(err);
+    throw err;
   }
 }
 
@@ -111,7 +115,7 @@ export async function updateWorkout(workout: Workout) {
         }
       }
     } catch (err) {
-      console.log(err);
+      throw new Error("Could not update workout , try again later");
     }
   });
 }

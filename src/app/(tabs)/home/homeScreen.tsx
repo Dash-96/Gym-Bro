@@ -1,7 +1,5 @@
-import WorkOutCard from "@/src/app/components/homeComponents/workoutCard";
-import { getNextWorkout } from "@/src/repositories/workoutRepo";
+import WorkOutDetailsCard from "@/src/app/components/homeComponents/workoutDetailsCard";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
-import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 export default function HomeScreen() {
   // useQuery result is declared but currently unused — direct call below is active instead
@@ -9,18 +7,21 @@ export default function HomeScreen() {
   const setWorkout = useWorkoutStore((state) => state.setWorkout);
   const workout = useWorkoutStore((state) => state.workout);
 
-  useEffect(() => {
-    (async () => {
-      let nextWorkout = await getNextWorkout();
-      if (nextWorkout) {
-        setWorkout(nextWorkout);
-      }
-    })();
-  }, []);
+  // useFocusEffect(() => {
+  //   (async () => {
+  //     let nextWorkout = await getNextWorkout();
+  //     if (nextWorkout) {
+  //       setWorkout(nextWorkout);
+  //     } else {
+  //       setWorkout({ id: 0 });
+  //     }
+  //     console.log("next workout hook executed", nextWorkout);
+  //   })();
+  // });
 
   return (
     <View style={styles.screenContainer}>
-      <WorkOutCard />
+      <WorkOutDetailsCard />
     </View>
   );
 }
