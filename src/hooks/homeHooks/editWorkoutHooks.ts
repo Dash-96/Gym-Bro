@@ -18,9 +18,9 @@ export function useCardExpand(setCount = 1, offset = 0) {
     height: cardHeight.value,
   }));
   function meassureExpandedHeight(event: LayoutChangeEvent) {
-    if (messured != 0) return;
+    if (messured === 0) return;
     const height = event.nativeEvent.layout.height;
-
+    debugger;
     setMessured(height);
   }
   function changeCardSize() {

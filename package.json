@@ -13,6 +13,7 @@
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo/vector-icons": "^15.0.3",
+    "@microsoft/signalr": "^10.0.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "8.4.4",
     "@react-native-community/netinfo": "11.4.1",
@@ -54,7 +55,6 @@
     "react-native-svg": "15.12.1",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "^0.5.1",
-    "root": "github:tanstack/react-query",
     "zustand": "^5.0.10"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 import { appStyle, fontSizes, fontStyles } from "@/src/app/constants/theme";
 import { getNextWorkout, updateWorkout } from "@/src/repositories/workoutRepo";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
+import { testConnection } from "@/src/web-socket/socketNotifications";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
@@ -41,6 +42,10 @@ export default function WorkOutDetailsCard() {
     }, []),
   );
 
+  useEffect(() => {
+    testConnection();
+  });
+
   //= Set the workout details upon loading the next workout into workout state
   useEffect(() => {
     let type = currentWorkoutState.workoutType;
@@ -67,41 +72,37 @@ export default function WorkOutDetailsCard() {
 
   return (
     <ImageBackground source={require("@/assets/images/create-workout-card.png")} imageStyle={{ borderRadius: 24 }} style={styles.cardContainer}>
-      <Pressable onPress={navigateToEdit}>
-        <View style={{ paddingHorizontal: 10, gap: 10 }}>
+      <View style={{ paddingHorizontal: 10, gap: 10 }}>
+        <Pressable onPress={navigateToEdit}>
           <Text style={[styles.cardTitle, fontStyles.semibold]}>Next Workout</Text>
           {cardType == "edit" && (
             <View style={{ gap: 10, width: "100%" }}>
               <View style={styles.rowContainr}>
-                <Text numberOfLines={1} style={[styles.workoutName, fontStyles.medium]}>
+                <Text numberOfLines={1} style={[styles.workoutName, styles.text, fontStyles.medium]}>
                   {workoutDetails.type} Day
                 </Text>
               </View>
               <View style={styles.rowContainr}>
-                <Text style={[styles.workoutName, fontStyles.medium]}>{workoutDetails.exerciseCount} exercises </Text>
-                <Text style={[styles.workoutName, fontStyles.medium]}>{workoutDetails.setsCount} sets </Text>
-                <Text style={[styles.workoutName, fontStyles.medium]}>~ {workoutDetails.duration} min</Text>
+                <Text style={[styles.workoutName, styles.text, fontStyles.medium]}>{workoutDetails.exerciseCount} exercises </Text>
+                <Text style={[styles.workoutName, styles.text, fontStyles.medium]}>{workoutDetails.setsCount} sets </Text>
+                <Text style={[styles.workoutName, styles.text, fontStyles.medium]}>~ {workoutDetails.duration} min</Text>
               </View>
             </View>
           )}
-          {cardType == "create" && <Text style={[styles.createWorkoutMessage, fontStyles.semibold]}>What Should We Train Today?</Text>}
+          {cardType == "create" && <Text style={[styles.createWorkoutMessage, , fontStyles.semibold]}>What Should We Train Today?</Text>}
           <StartButton />
-        </View>
-      </Pressable>
+        </Pressable>
+      </View>
     </ImageBackground>
   );
 
   function StartButton() {
     return (
       <Pressable style={styles.startButton} onPress={startWorkout}>
-        <Text style={[styles.startText, fontStyles.semibold]}>{buttonTextRef.current}</Text>
+        <Text style={[styles.startText, styles.text, fontStyles.semibold]}>{buttonTextRef.current}</Text>
       </Pressable>
     );
   }
-}
-
-function WorkoutMetaInfo() {
-  return;
 }
 
 const styles = StyleSheet.create({
@@ -111,6 +112,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingVertical: 20,
     gap: 5,
+  },
+  text: {
+    flex: 1,
+    textAlign: "center",
   },
   rowContainr: {
     flexDirection: "row",
@@ -139,6 +144,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
     borderRadius: 20,
   },
   startText: {
