@@ -1,7 +1,6 @@
 import { appStyle, fontSizes, fontStyles } from "@/src/app/constants/theme";
 import { getNextWorkout, updateWorkout } from "@/src/repositories/workoutRepo";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
-import { testConnection } from "@/src/web-socket/socketNotifications";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
@@ -41,10 +40,6 @@ export default function WorkOutDetailsCard() {
       })();
     }, []),
   );
-
-  useEffect(() => {
-    testConnection();
-  });
 
   //= Set the workout details upon loading the next workout into workout state
   useEffect(() => {

@@ -1,6 +1,7 @@
 import WorkOutDetailsCard from "@/src/app/components/homeComponents/workoutDetailsCard";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
-import { StyleSheet, View } from "react-native";
+import { testConnection } from "@/src/web-socket/socketNotifications";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 export default function HomeScreen() {
   // useQuery result is declared but currently unused — direct call below is active instead
   // const { data: workoutDetails, isLoading, isError, error } = useQuery({ queryKey: ["workouts"], queryFn: getWorkouts });
@@ -22,6 +23,9 @@ export default function HomeScreen() {
   return (
     <View style={styles.screenContainer}>
       <WorkOutDetailsCard />
+      <Pressable onPress={testConnection} style={({ pressed }) => [pressed && { opacity: 0.4 }, { backgroundColor: "orange", padding: 20, marginTop: 50 }]}>
+        <Text>Test signalR connection</Text>
+      </Pressable>
     </View>
   );
 }

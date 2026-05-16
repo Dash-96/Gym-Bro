@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
-import { ChartNoAxesCombined, Dumbbell } from "lucide-react-native";
+import { ChartNoAxesCombined, Dumbbell, Handshake } from "lucide-react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { appStyle } from "../constants/theme";
 
@@ -30,6 +30,7 @@ export default function TabsLayout() {
               tabBarIcon: ({ color, focused }) => <ChartNoAxesCombined size={24} color={color} />,
             }}
           />
+          <Tabs.Screen name="social" options={{ headerShown: false, tabBarIcon: ({ color, focused }) => <Handshake color={color} /> }} />
           {/* Prevent expo-router from exposing this nested screen as a tab */}
           {/* <Tabs.Screen name="home/screens/homeScreen" options={{ href: null }} /> */}
         </Tabs>

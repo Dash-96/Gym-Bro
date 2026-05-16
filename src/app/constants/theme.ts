@@ -34,10 +34,10 @@ export const cardStyles = {
 };
 
 export const fontSizes = {
-  screenTitle: 24,
+  screenTitle: 26,
   cardTitle: 18,
   cardSubTitle: 16,
-  sectionHeader: 16,
+  sectionHeader: 22,
   bodyText: 14,
   metaText: 12,
   buttonText: 16,
