@@ -1,7 +1,7 @@
 import { Exercise, ExerciseMeta } from "@/src/models/workoutModel";
 import { getExercisesMeta, getNextWorkout, updateSets } from "@/src/repositories/workoutRepo";
 import { useActiveCardStore, useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LayoutChangeEvent } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
 import { clamp, SharedValue, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
@@ -12,21 +12,21 @@ export function useCardExpand(setCount = 1, offset = 0) {
   const shrinkedSize = 60;
   const expandedSize = 50 * setCount + shrinkedSize + offset;
   const [isExpanded, setIsExpanded] = useState(false);
-  const [messured, setMessured] = useState(0);
+  const messuredHeightRef = useRef(0);
   const cardHeight = useSharedValue(shrinkedSize);
   const cardAnimatedStyle = useAnimatedStyle(() => ({
     height: cardHeight.value,
   }));
   function meassureExpandedHeight(event: LayoutChangeEvent) {
-    if (messured === 0) return;
+    if (messuredHeightRef.current !== 0) return; /// if the height was already set exit the function
     const height = event.nativeEvent.layout.height;
     debugger;
-    setMessured(height);
+    messuredHeightRef.current = height;
   }
   function changeCardSize() {
-    if (messured === 0) return;
+    if (messuredHeightRef.current === 0) return; /// the actual size of the component wasnt calculated yet
     setIsExpanded((prev) => !prev);
-    cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? messured : shrinkedSize, { duration: 500 });
+    cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? messuredHeightRef.current : shrinkedSize, { duration: 500 });
   }
   return { cardAnimatedStyle, changeCardSize, isExpanded, meassureExpandedHeight };
 }
