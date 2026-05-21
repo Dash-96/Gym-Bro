@@ -1,13 +1,12 @@
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useCustomFonts } from "../hooks/sharedHooks/useCustomFonts";
 import { useOnlineManagaer } from "../hooks/sharedHooks/useOnlineManager";
 import { useSqlite } from "../hooks/sharedHooks/useSqlite";
 import { persister, queryClient } from "../serverStateStore/queryClient";
-import { startSocketConnection } from "../web-socket/webSocket";
+import { useWebSocket } from "../web-socket/useWebSocket";
 import { appStyle } from "./constants/theme";
 
 // Keep the splash screen visible until fonts finish loading
@@ -17,10 +16,7 @@ export default function RootLayout() {
   useSqlite();
   useCustomFonts();
   useOnlineManagaer();
-  useEffect(() => {
-    startSocketConnection();
-  }, []);
-
+  useWebSocket();
   return (
     <GestureHandlerRootView>
       <PersistQueryClientProvider

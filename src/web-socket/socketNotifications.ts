@@ -1,15 +1,19 @@
 import { ToastAndroid } from "react-native";
-import { socketConnection } from "./webSocket";
+import { getSocketConnection } from "./webSocket";
 
 export async function testConnection() {
+  const socketConnection = getSocketConnection();
   try {
-    const result = await socketConnection.invoke("SendFriendRequest", 31);
+    await socketConnection.invoke("SendFriendRequest", 31);
   } catch (error) {
     console.log(error);
   }
 }
 
-socketConnection.on("FriendRequest", (payload) => {
-  console.log(payload);
-  ToastAndroid.show(`${payload.senderName} sent you a friend request`, ToastAndroid.LONG);
-});
+export function registerSocketNotifications() {
+  const socketConnection = getSocketConnection();
+  socketConnection.on("FriendRequest", (payload) => {
+    console.log(payload);
+    ToastAndroid.show(`${payload.senderName} sent you a friend request`, ToastAndroid.LONG);
+  });
+}
