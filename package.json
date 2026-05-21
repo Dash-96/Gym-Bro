@@ -27,6 +27,7 @@
     "drizzle-orm": "^1.0.0-beta.15-859cf75",
     "expo": "~54.0.34",
     "expo-constants": "~18.0.12",
+    "expo-dev-client": "~6.0.21",
     "expo-drizzle-studio-plugin": "^0.2.1",
     "expo-font": "~14.0.10",
     "expo-haptics": "~15.0.8",
