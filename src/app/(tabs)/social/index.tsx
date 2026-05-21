@@ -2,6 +2,7 @@ import { getFriendRequests } from "@/src/api/notificationApi";
 import { useQuery } from "@tanstack/react-query";
 import { StyleSheet, Text, View } from "react-native";
 import FriendRequestSection from "../../components/social/friendRequestSection";
+import FriendsList from "../../components/social/friendsList";
 import SocialMainCard from "../../components/social/socialMainCard";
 import { appStyle, fontSizes, fontStyles } from "../../constants/theme";
 
@@ -13,6 +14,7 @@ export default function SocialScreen() {
       <Text style={styles.headerText}>Train with friends , stay consistent</Text>
       <SocialMainCard />
       <FriendRequestSection />
+      <FriendsList />
     </View>
   );
 }
