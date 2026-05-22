@@ -1,4 +1,4 @@
-import type { HubConnection } from "@microsoft/signalr";
+import { HubConnectionState, type HubConnection } from "@microsoft/signalr";
 
 const socketUrl = process.env.EXPO_SOCKET_CONNECTION ?? "http://10.175.61.241:5276/notificationHub";
 const token = process.env.EXPO_PUBLIC_TOKEN;
@@ -21,8 +21,11 @@ export function getSocketConnection(): HubConnection {
 
 export async function startSocketConnection() {
   try {
-    await getSocketConnection().start();
-    console.log("signalR Connected...");
+    let socekt = getSocketConnection();
+    if (socekt.state == HubConnectionState.Disconnected) {
+      await socekt.start();
+      console.log("signalR Connected...");
+    }
   } catch (error) {
     console.log(error);
     setTimeout(startSocketConnection, 5000);

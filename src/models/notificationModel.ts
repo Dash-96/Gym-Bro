@@ -3,3 +3,8 @@ export type RequestNotification = {
   senderName: string;
   message: string;
 };
+
+export type Friend = {
+  friendId: number;
+  userName: string;
+};
