@@ -5,14 +5,15 @@ import { fontSizes, fontStyles } from "../../constants/theme";
 import FriendCard from "./friendCard";
 
 export default function FriendsList() {
-  const { data: friendsList, isSuccess } = useQuery({ queryKey: ["frindsList"], queryFn: getFriendsList });
+  const { data: friendsList, isSuccess } = useQuery({ queryKey: ["friendsList"], queryFn: getFriendsList });
 
   if (isSuccess) {
+    console.log(friendsList);
     return (
       <View>
         <Text style={styles.sectionTitle}>Friends</Text>
         {friendsList.map((friend, index) => (
-          <FriendCard key={friend.friendId} cardNumber={index} friendName={friend.userName}></FriendCard>
+          <FriendCard key={index} cardNumber={index} friendName={friend.userName}></FriendCard>
         ))}
       </View>
     );

@@ -1,6 +1,6 @@
 import { acceptFriendRequest } from "@/src/api/notificationApi";
 import { RequestNotification } from "@/src/models/notificationModel";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check, X } from "lucide-react-native";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { appStyle, fontSizes, fontStyles } from "../../constants/theme";
@@ -11,7 +11,12 @@ type Props = {
   friendRequest: RequestNotification;
 };
 export default function FriendRequestsCard({ friendRequest }: Props) {
+  const queryClient = useQueryClient();
   const { mutate: requestMutation, isSuccess: isFriendAdded } = useMutation({ mutationKey: ["friendRequest"], mutationFn: acceptFriendRequest });
+  if (isFriendAdded) {
+    queryClient.invalidateQueries({ queryKey: ["friendsList"] });
+    queryClient.invalidateQueries({ queryKey: ["friend-requests"] });
+  }
   return (
     <SimpleCard customStyle={styles.cardStyle}>
       <View style={styles.detailsSection}>
