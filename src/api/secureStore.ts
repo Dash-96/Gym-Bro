@@ -1,8 +1,14 @@
 import * as SecureStore from "expo-secure-store";
 export async function getTokenAsync() {
-  return await SecureStore.getItemAsync("token");
+  return await SecureStore.getItemAsync("accessToken");
+}
+export async function getRefreshTokenAsync() {
+  return await SecureStore.getItemAsync("refreshToken");
 }
 
 export async function setTokenAsync(token: string) {
-  await SecureStore.setItemAsync("token", token);
+  await SecureStore.setItemAsync("accessToken", token);
+}
+export async function setRefreshTokenAsync(token: string) {
+  await SecureStore.setItemAsync("refreshToken", token);
 }
