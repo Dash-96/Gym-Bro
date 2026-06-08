@@ -10,26 +10,30 @@ import { scheduleOnRN } from "react-native-worklets";
 //= This hook controls the expansion of the ExerciseCard component
 export function useCardExpand(setCount = 1, offset = 0) {
   const shrinkedSize = 60;
-  const expandedSize = 50 * setCount + shrinkedSize + offset;
   const [isExpanded, setIsExpanded] = useState(false);
-  const messuredHeightRef = useRef(0);
+  const messureExpandeddHeightRef = useRef(0);
   const cardHeight = useSharedValue(shrinkedSize);
   const cardAnimatedStyle = useAnimatedStyle(() => ({
     height: cardHeight.value,
   }));
   function meassureExpandedHeight(event: LayoutChangeEvent) {
-    if (messuredHeightRef.current !== 0) return; /// if the height was already set exit the function
-    const height = event.nativeEvent.layout.height;
-    debugger;
-    messuredHeightRef.current = height;
+    /// Measure the height on each layout change, and set the max height to be the expanded height
+    let isHeightGrew = messureExpandeddHeightRef.current < event.nativeEvent.layout.height;
+    messureExpandeddHeightRef.current = Math.max(messureExpandeddHeightRef.current, event.nativeEvent.layout.height);
+    if (isHeightGrew) {
+      /// that means the new calculated height was larger than the previous, so we expand the card more
+      cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? messureExpandeddHeightRef.current : shrinkedSize, { duration: 500 });
+    }
   }
   function changeCardSize() {
-    if (messuredHeightRef.current === 0) return; /// the actual size of the component wasnt calculated yet
+    console.log(`meassured height is: ${messureExpandeddHeightRef.current}`);
+    if (messureExpandeddHeightRef.current === 0) return; /// the actual size of the component wasnt calculated yet
     setIsExpanded((prev) => !prev);
-    cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? messuredHeightRef.current : shrinkedSize, { duration: 500 });
+    cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? messureExpandeddHeightRef.current : shrinkedSize, { duration: 500 });
   }
   return { cardAnimatedStyle, changeCardSize, isExpanded, meassureExpandedHeight };
 }
+
 //= This hook controls the rotation of the arrow when pressed
 export function useArrowRotate() {
   const rotateDegree = useSharedValue(0);
