@@ -1,15 +1,21 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
-import { LayoutChangeEvent, StyleSheet, Text } from "react-native";
+import { ColorValue, DimensionValue, LayoutChangeEvent, StyleSheet, Text } from "react-native";
 
 type Props = {
   withOutline?: boolean;
   circleNumber?: number;
   userSymbol?: string;
+  customText?: string;
+  customColors?: [ColorValue, ColorValue, ...ColorValue[]];
+  customFont?: number;
+  customWidth?: DimensionValue;
+  customHeight?: DimensionValue;
 };
 
-export default function UserCircle({ withOutline, circleNumber = 0, userSymbol }: Props) {
+export default function UserCircle({ withOutline, circleNumber = 0, userSymbol, customText, customColors, customFont = 0, customWidth, customHeight }: Props) {
   const [fontSize, setFontSize] = useState(1);
+  const haveCustomFontSize = customFont != 0 ? true : false;
   function getDimensions(event: LayoutChangeEvent) {
     const height = event.nativeEvent.layout.height;
     const width = event.nativeEvent.layout.width;
@@ -21,10 +27,12 @@ export default function UserCircle({ withOutline, circleNumber = 0, userSymbol }
   return (
     <LinearGradient
       onLayout={(event) => getDimensions(event)}
-      style={[styles.gradientContainer, withOutline && styles.circleOutline]}
-      colors={[circleColors[circleNumber].fromColor, circleColors[circleNumber].toColor]}
+      style={[styles.gradientContainer, withOutline && styles.circleOutline, { width: customWidth, height: customHeight }]}
+      colors={
+        customColors ? customColors : [circleColors[circleNumber % circleColors.length].fromColor, circleColors[circleNumber % circleColors.length].toColor]
+      }
     >
-      <Text style={[styles.userSymbol, { fontSize: fontSize }]}>{userSymbol}</Text>
+      <Text style={[styles.userSymbol, { fontSize: fontSize }, haveCustomFontSize && { fontSize: customFont }]}>{customText ? customText : userSymbol}</Text>
     </LinearGradient>
   );
 }
@@ -54,5 +62,6 @@ const circleColors = [
   { fromColor: "#C084FC", toColor: "#9333EA" },
   { fromColor: "#60A5FA", toColor: "#2563EB" },
   { fromColor: "#4ADE80", toColor: "#16A34A" },
+  { fromColor: "#FB923C", toColor: "#EA580C" },
   { fromColor: "#FB923C", toColor: "#EA580C" },
 ];

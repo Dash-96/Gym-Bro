@@ -1,6 +1,8 @@
 import WorkOutDetailsCard from "@/src/app/components/homeComponents/workoutDetailsCard";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { testConnection } from "@/src/web-socket/socketNotifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 export default function HomeScreen() {
   // useQuery result is declared but currently unused — direct call below is active instead
@@ -19,6 +21,10 @@ export default function HomeScreen() {
   //     console.log("next workout hook executed", nextWorkout);
   //   })();
   // });
+
+  useEffect(() => {
+    AsyncStorage.setItem("test-key", "test-value");
+  }, []);
 
   return (
     <View style={styles.screenContainer}>

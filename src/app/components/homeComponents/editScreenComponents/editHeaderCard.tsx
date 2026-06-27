@@ -1,11 +1,11 @@
-import { appStyle, cardStyles, fontSizes, fontStyles } from "@/src/app/constants/theme";
+import CustomText from "@/src/app/components/sharedComponents/customText";
+import { appStyle, cardStyles, fontStyles } from "@/src/app/constants/theme";
 import { useArrowRotate } from "@/src/hooks/homeHooks/editWorkoutHooks";
 import { useDateTimePicker } from "@/src/hooks/sharedHooks/useCalendar";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { Calendar } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 export default function EditHeaderCard() {
@@ -32,7 +32,7 @@ export default function EditHeaderCard() {
   return (
     <View style={[styles.cardContainer, cardStyles]}>
       <View style={{ width: "100%", gap: 10 }}>
-        <Text style={[fontStyles.medium, styles.cardSubtitle]}>Workout Type</Text>
+        <CustomText variant="cardSubTitle">Workout Type</CustomText>
         <Pressable
           style={styles.input}
           onPress={() => {
@@ -41,7 +41,7 @@ export default function EditHeaderCard() {
           }}
         >
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-            <Text style={[fontStyles.semibold, styles.inputText]}>{currentType != "" ? currentType : "choose workout"}</Text>
+            <CustomText style={[fontStyles.semibold, styles.inputText]}>{currentType != "" ? currentType : "choose workout"}</CustomText>
             <Animated.View style={arrowRotateStyle}>
               <AntDesign name="down" size={18} color="black" />
             </Animated.View>
@@ -60,28 +60,31 @@ export default function EditHeaderCard() {
               rotateArrow();
             }}
           >
-            <Text style={[fontStyles.semibold, styles.inputText]}>{type}</Text>
+            <CustomText style={[fontStyles.semibold, styles.inputText]}>{type}</CustomText>
           </Pressable>
         ))}
       </View>
 
       <View style={{ width: "100%", gap: 10 }}>
-        <Text style={[fontStyles.medium, styles.cardSubtitle]}>
-          Workout Alias <Text style={{ color: appStyle.text.mutedTextColor }}>(optional)</Text>
-        </Text>
+        <CustomText variant="cardSubTitle">
+          Workout Alias <CustomText color="muted">(optional)</CustomText>
+        </CustomText>
         <TextInput placeholder="e.g, Push A" placeholderTextColor={appStyle.text.mutedTextColor} style={[styles.input, styles.inputText]}></TextInput>
-        <Text style={{ color: appStyle.text.secondaryTextColor }}>You can edit this later</Text>
+        <CustomText color="secondary">You can edit this later</CustomText>
       </View>
 
-      <Pressable style={[styles.input, styles.dateInput]} onPress={openStartCalendar}>
+      {
+        /// Edit workout start and finish times and dates
+        /* <Pressable style={[styles.input, styles.dateInput]} onPress={openStartCalendar}>
         <Calendar />
-        <Text style={[fontStyles.medium, styles.cardSubtitle]}>{startTime != null ? startTime.toLocaleString() : "Update Start Time"}</Text>
+        <CustomText variant="cardSubTitle">{startTime != null ? startTime.toLocaleString() : "Update Start Time"}</CustomText>
       </Pressable>
 
       <Pressable style={[styles.input, styles.dateInput]} onPress={openEndCalendar}>
         <Calendar />
-        <Text style={[fontStyles.medium, styles.cardSubtitle]}>{endTime != null ? endTime?.toLocaleString() : "Update End Time"}</Text>
-      </Pressable>
+        <CustomText variant="cardSubTitle">{endTime != null ? endTime?.toLocaleString() : "Update End Time"}</CustomText>
+      </Pressable> */
+      }
     </View>
   );
 }
@@ -94,10 +97,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 15,
     gap: 20,
-  },
-
-  cardSubtitle: {
-    fontSize: fontSizes.cardSubTitle,
   },
 
   inputText: {

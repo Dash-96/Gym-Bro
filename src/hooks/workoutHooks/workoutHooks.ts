@@ -1,6 +1,10 @@
+import { useWorkoutTrackerContext } from "@/src/app/components/workoutComponents/workoutTrackrContext";
 import { useEffect, useState } from "react";
 
 export function useTimerTicker(rest: String = "") {
+  const { setsCount, isStarted } = useWorkoutTrackerContext();
+  console.log("count: ", setsCount);
+  console.log("isStarted: ", isStarted);
   const [restDuration, setRestDuration] = useState({ hours: "00", minutes: "02", seconds: "00" });
   const [, setTotalSecondsRemaining] = useState(() => {
     if (!rest) return 120;
@@ -9,21 +13,23 @@ export function useTimerTicker(rest: String = "") {
   });
 
   useEffect(() => {
-    if (rest) {
-      const [h, m, s] = rest.split(":").map(Number);
+    if (setsCount > 0) {
+      const [h, m, s] = (rest || "00:02:00").split(":").map(Number);
+      setTotalSecondsRemaining(h * 3600 + m * 60 + s);
       setRestDuration({
         hours: String(h).padStart(2, "0"),
         minutes: String(m).padStart(2, "0"),
         seconds: String(s).padStart(2, "0"),
       });
     }
-  }, [rest]);
+  }, [rest, setsCount]);
 
   useEffect(() => {
+    if (setsCount == 0) return;
     const interval = setInterval(() => {
       setTotalSecondsRemaining((prev) => {
         if (prev <= 0) {
-          clearInterval(interval);
+          // clearInterval(interval);
           return 0;
         }
         const diff = prev - 1;
@@ -40,7 +46,7 @@ export function useTimerTicker(rest: String = "") {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isStarted]);
 
   function alterTime(time: number) {
     setTotalSecondsRemaining((prev) => {

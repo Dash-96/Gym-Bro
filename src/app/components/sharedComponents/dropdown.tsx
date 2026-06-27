@@ -1,7 +1,8 @@
 import { useArrowRotate } from "@/src/hooks/homeHooks/editWorkoutHooks";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import CustomText from "@/src/app/components/sharedComponents/customText";
 import Animated from "react-native-reanimated";
 import { appStyle, cardStyles, fontStyles } from "../../constants/theme";
 
@@ -31,7 +32,7 @@ export default function DropDown<T>({ list, getKey, getValue, withCategory, onSe
         }}
       >
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <Text style={[fontStyles.semibold, styles.inputText]}>{selectedValue}</Text>
+          <CustomText style={[fontStyles.semibold, styles.inputText]}>{selectedValue}</CustomText>
           <Animated.View style={arrowRotateStyle}>
             <AntDesign name="down" size={18} color="black" />
           </Animated.View>
@@ -44,7 +45,7 @@ export default function DropDown<T>({ list, getKey, getValue, withCategory, onSe
       >
         {list.map((section, sectionIndex) => (
           <View key={section.title ?? sectionIndex}>
-            {section.title && <Text style={[fontStyles.semibold, styles.sectionHeader]}>{section.title}</Text>}
+            {section.title && <CustomText variant="sectionHeader" style={styles.sectionHeader}>{section.title}</CustomText>}
             {sectionIndex > 0 && <View style={styles.sectionSeprator} />}
             {section.data.map((item, itemIndex) => (
               <View key={getKey(item).toString()}>
@@ -58,7 +59,7 @@ export default function DropDown<T>({ list, getKey, getValue, withCategory, onSe
                     setIsVisible(false);
                   }}
                 >
-                  <Text style={[fontStyles.regular, styles.sectionText]}>{getValue(item)}</Text>
+                  <CustomText style={[fontStyles.regular, styles.sectionText]}>{getValue(item)}</CustomText>
                 </Pressable>
               </View>
             ))}
@@ -99,7 +100,6 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   sectionHeader: {
-    fontSize: 22,
     color: appStyle.colors.primaryColor,
     marginVertical: 10,
     backgroundColor: appStyle.colors.primaryTintColor,

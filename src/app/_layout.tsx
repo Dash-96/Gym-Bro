@@ -1,22 +1,25 @@
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
+import { SplashScreen, Stack } from "expo-router";
+import { useRef } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useAutoSignIn } from "../hooks/sharedHooks/useAutoSignIn";
 import { useCustomFonts } from "../hooks/sharedHooks/useCustomFonts";
 import { useOnlineManagaer } from "../hooks/sharedHooks/useOnlineManager";
 import { useSqlite } from "../hooks/sharedHooks/useSqlite";
 import { persister, queryClient } from "../serverStateStore/queryClient";
-import { useWebSocket } from "../web-socket/useWebSocket";
 import { appStyle } from "./constants/theme";
+import SocketProvider from "./socketProvider";
 
 // Keep the splash screen visible until fonts finish loading
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const isSignedIn = useRef<boolean>(false);
   useSqlite();
   useCustomFonts();
   useOnlineManagaer();
-  useWebSocket();
+  //  useWebSocket();
+  useAutoSignIn(isSignedIn);
   return (
     <GestureHandlerRootView>
       <PersistQueryClientProvider
@@ -30,10 +33,12 @@ export default function RootLayout() {
           queryClient.resumePausedMutations();
         }}
       >
-        <Stack screenOptions={{ contentStyle: { backgroundColor: appStyle.colors.pageBg } }}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        </Stack>
+        <SocketProvider>
+          <Stack screenOptions={{ contentStyle: { backgroundColor: appStyle.colors.pageBg }, headerShown: false }}>
+            {!isSignedIn.current && <Stack.Screen name="(auth)" options={{ headerShown: false }} />}
+            {isSignedIn.current && <Stack.Screen name="(tabs)" options={{ headerShown: false }} />}
+          </Stack>
+        </SocketProvider>
       </PersistQueryClientProvider>
     </GestureHandlerRootView>
   );

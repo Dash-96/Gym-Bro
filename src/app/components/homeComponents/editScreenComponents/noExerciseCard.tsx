@@ -1,6 +1,7 @@
-import { appStyle, cardStyles, fontSizes, fontStyles } from "@/src/app/constants/theme";
+import { appStyle, cardStyles } from "@/src/app/constants/theme";
+import CustomText from "@/src/app/components/sharedComponents/customText";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function NoExerciseCard() {
   return (
@@ -8,10 +9,10 @@ export default function NoExerciseCard() {
       <View style={styles.iconWraper}>
         <Ionicons name="barbell" size={40} color={appStyle.colors.primaryColor} style={styles.barberllIcon} />
       </View>
-      <Text style={[fontStyles.medium, { fontSize: fontSizes.cardSubTitle }]}>No exercises yet</Text>
-      <Text style={[fontStyles.regular, { color: appStyle.text.mutedTextColor, textAlign: "center", fontSize: fontSizes.bodyText }]}>
+      <CustomText variant="cardSubTitle">No exercises yet</CustomText>
+      <CustomText variant="body" color="muted" style={{ textAlign: "center" }}>
         Add your dirst exercise to start building {"\n"} your workout plan
-      </Text>
+      </CustomText>
     </View>
   );
 }

@@ -1,8 +1,14 @@
 import { useEffect } from "react";
-import { startSocketConnection } from "./webSocket";
+import { startSocketConnection, terminateConnection } from "./webSocket";
 
 export function useWebSocket() {
   useEffect(() => {
-    startSocketConnection();
+    (async () => {
+      startSocketConnection();
+    })();
+
+    return () => {
+      terminateConnection();
+    };
   }, []);
 }

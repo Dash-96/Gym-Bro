@@ -1,10 +1,11 @@
-import { appStyle, cardStyles, fontSizes, fontStyles } from "@/src/app/constants/theme";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import CustomText from "@/src/app/components/sharedComponents/customText";
+import { appStyle, cardStyles, fontStyles } from "@/src/app/constants/theme";
+import { StyleSheet, TextInput, View } from "react-native";
 
 export default function NotesCard() {
   return (
     <View style={[cardStyles, styles.cardContainer]}>
-      <Text style={[fontStyles.medium, { fontSize: fontSizes.cardSubTitle }]}>Notes</Text>
+      <CustomText variant="cardSubTitle">Notes</CustomText>
       <TextInput
         placeholder="Add cues, goals, or reminders..."
         placeholderTextColor={appStyle.text.secondaryTextColor}

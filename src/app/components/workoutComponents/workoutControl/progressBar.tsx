@@ -3,8 +3,8 @@ import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { Activity } from "lucide-react-native";
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { useWorkoutTrackerContext } from "./excerciseCountContext";
+import { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { useWorkoutTrackerContext } from "../workoutTrackrContext";
 
 export default function ProgressBar() {
   const { count: current } = useWorkoutTrackerContext();
@@ -27,11 +27,11 @@ export default function ProgressBar() {
         <Text style={styles.exerciseText}>
           {current}/{total} exercises
         </Text>
-        <Text style={styles.percentageText}>{percentage}%</Text>
+        {/* <Text style={styles.percentageText}>{percentage}%</Text> */}
       </View>
-      <View style={styles.track}>
+      {/* <View style={styles.track}>
         <Animated.View style={[styles.fill, fillStyle]} />
-      </View>
+      </View> */}
     </View>
   );
 }
@@ -42,17 +42,17 @@ const styles = StyleSheet.create({
     gap: 8,
     position: "fixed",
     top: 0,
-    backgroundColor: "white",
-    padding: 20,
+    // backgroundColor: "white",
+    // padding: 20,
   },
   infoRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 6,
   },
   exerciseText: {
-    flex: 1,
-    fontSize: fontSizes.metaText,
+    fontSize: fontSizes.cardSubTitle,
     ...fontStyles.medium,
     color: appStyle.text.secondaryTextColor,
   },

@@ -1,9 +1,10 @@
-import { Login } from "@/src/api/authApi";
+import { Login, signIn } from "@/src/api/authApi";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "expo-router";
 import { useRef } from "react";
 import { Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import Button from "../components/sharedComponents/button";
 import SimpleCard from "../components/sharedComponents/simpleCard";
 import { appStyle } from "../constants/theme";
 
@@ -11,14 +12,20 @@ export default function LoginScreen() {
   const nameRef = useRef("");
   const passwordRef = useRef("");
 
-  const mutation = useMutation({
+  const { mutate: login } = useMutation({
     mutationFn: async ({ userName, password }: { userName: string; password: string }) => {
       return await Login(userName, password);
     },
   });
 
+  const { mutate: testAuth } = useMutation({ mutationFn: () => signIn() });
+  function handleTest() {
+    testAuth();
+  }
+
   async function register() {
-    console.log("button pressed");
+    login({ userName: nameRef.current, password: passwordRef.current });
+    // console.log("button pressed");
   }
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -31,6 +38,8 @@ export default function LoginScreen() {
             <Pressable style={styles.submitButton} onPress={register}>
               <Text style={styles.submitText}>Lets Go!</Text>
             </Pressable>
+
+            <Button text={"בדיקה"} onPress={handleTest}></Button>
 
             <Link href={"/register"} replace>
               Create a user

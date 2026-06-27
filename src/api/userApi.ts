@@ -1,19 +1,11 @@
-import { Friend } from "../models/notificationModel";
+import { httpClient } from "./clients/httpClient";
 
-const baseUrl = process.env.EXPO_PUBLIC_API_URL;
-const token = process.env.EXPO_PUBLIC_TOKEN;
-
-//! Continue
-export async function getFriendsList(): Promise<Friend[]> {
-  let friends = [];
+export async function getUserDetails() {
   try {
-    const response = await fetch(`${baseUrl}/user/friends`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    friends = await response.json();
-    console.log(friends);
+    const response = await httpClient.get("/user/user-details");
+    console.log(response.data);
+    return response.data;
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
-  return friends;
 }

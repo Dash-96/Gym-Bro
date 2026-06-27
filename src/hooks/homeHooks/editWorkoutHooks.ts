@@ -26,7 +26,7 @@ export function useCardExpand(setCount = 1, offset = 0) {
     }
   }
   function changeCardSize() {
-    console.log(`meassured height is: ${messureExpandeddHeightRef.current}`);
+    // console.log(`meassured height is: ${messureExpandeddHeightRef.current}`);
     if (messureExpandeddHeightRef.current === 0) return; /// the actual size of the component wasnt calculated yet
     setIsExpanded((prev) => !prev);
     cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? messureExpandeddHeightRef.current : shrinkedSize, { duration: 500 });

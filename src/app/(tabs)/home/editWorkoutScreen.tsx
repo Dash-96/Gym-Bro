@@ -4,7 +4,8 @@ import EditHeaderCard from "@/src/app/components/homeComponents/editScreenCompon
 import ExerciseCardList from "@/src/app/components/homeComponents/editScreenComponents/exerciseCardList";
 import NoExerciseCard from "@/src/app/components/homeComponents/editScreenComponents/noExerciseCard";
 import NotesCard from "@/src/app/components/homeComponents/editScreenComponents/notesCard";
-import { appStyle, fontSizes, fontStyles } from "@/src/app/constants/theme";
+import { appStyle } from "@/src/app/constants/theme";
+import CustomText from "@/src/app/components/sharedComponents/customText";
 import { useHiddenTabBar } from "@/src/hooks/sharedHooks/useHiddenTabBar";
 import { insertWorkout, updateWorkout } from "@/src/repositories/workoutRepo";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
@@ -12,7 +13,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useMutation } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, ToastAndroid } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, ToastAndroid } from "react-native";
 
 export default function EditWorkoutScreen() {
   const workoutData = useWorkoutStore((state) => state.workout);
@@ -63,14 +64,14 @@ export default function EditWorkoutScreen() {
         {isModalVisible && <CreateExercisePopup visible={true} onClose={() => setModalVisisble(false)} orderIndex={1} />}
         <Pressable style={styles.addExerciseButton} onPress={() => setModalVisisble(true)}>
           <AntDesign name="plus" size={16} color="white" />
-          <Text style={(fontStyles.semibold, { fontSize: fontSizes.buttonText, color: "white", fontWeight: "bold" })}>Add Exercise</Text>
+          <CustomText variant="button" color="light" style={{ fontWeight: "bold" }}>Add Exercise</CustomText>
         </Pressable>
         <NotesCard />
         <Pressable style={styles.saveButton} onPress={() => saveWorkout(`${isExistingWorkout ? "update" : "save"}`)}>
           <AntDesign name="save" size={24} color="white" />
-          <Text style={(fontStyles.semibold, { fontSize: fontSizes.buttonText, color: "white", fontWeight: "bold" })}>
+          <CustomText variant="button" color="light" style={{ fontWeight: "bold" }}>
             {isExistingWorkout ? "Update Workout" : "Save Workout"}
-          </Text>
+          </CustomText>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>

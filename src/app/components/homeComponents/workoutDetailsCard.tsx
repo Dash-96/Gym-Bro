@@ -1,9 +1,10 @@
 import { appStyle, fontSizes, fontStyles } from "@/src/app/constants/theme";
+import CustomText from "@/src/app/components/sharedComponents/customText";
 import { getNextWorkout, updateWorkout } from "@/src/repositories/workoutRepo";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, Pressable, StyleSheet, View } from "react-native";
 
 // Home screen card that shows either a "create workout" prompt or existing workout details
 // depending on whether an unfinished workout is found in the DB (workoutState: "create" | "edit")
@@ -69,22 +70,22 @@ export default function WorkOutDetailsCard() {
     <ImageBackground source={require("@/assets/images/create-workout-card.png")} imageStyle={{ borderRadius: 24 }} style={styles.cardContainer}>
       <View style={{ paddingHorizontal: 10, gap: 10 }}>
         <Pressable onPress={navigateToEdit}>
-          <Text style={[styles.cardTitle, fontStyles.semibold]}>Next Workout</Text>
+          <CustomText variant="cardTitle" color="light" style={{ alignSelf: "center" }}>Next Workout</CustomText>
           {cardType == "edit" && (
             <View style={{ gap: 10, width: "100%" }}>
               <View style={styles.rowContainr}>
-                <Text numberOfLines={1} style={[styles.workoutName, styles.text, fontStyles.medium]}>
+                <CustomText numberOfLines={1} variant="cardSubTitle" color="light" style={styles.text}>
                   {workoutDetails.type} Day
-                </Text>
+                </CustomText>
               </View>
               <View style={styles.rowContainr}>
-                <Text style={[styles.workoutName, styles.text, fontStyles.medium]}>{workoutDetails.exerciseCount} exercises </Text>
-                <Text style={[styles.workoutName, styles.text, fontStyles.medium]}>{workoutDetails.setsCount} sets </Text>
-                <Text style={[styles.workoutName, styles.text, fontStyles.medium]}>~ {workoutDetails.duration} min</Text>
+                <CustomText variant="cardSubTitle" color="light" style={styles.text}>{workoutDetails.exerciseCount} exercises </CustomText>
+                <CustomText variant="cardSubTitle" color="light" style={styles.text}>{workoutDetails.setsCount} sets </CustomText>
+                <CustomText variant="cardSubTitle" color="light" style={styles.text}>~ {workoutDetails.duration} min</CustomText>
               </View>
             </View>
           )}
-          {cardType == "create" && <Text style={[styles.createWorkoutMessage, , fontStyles.semibold]}>What Should We Train Today?</Text>}
+          {cardType == "create" && <CustomText style={[styles.createWorkoutMessage, fontStyles.semibold]}>What Should We Train Today?</CustomText>}
           <StartButton />
         </Pressable>
       </View>
@@ -94,7 +95,7 @@ export default function WorkOutDetailsCard() {
   function StartButton() {
     return (
       <Pressable style={styles.startButton} onPress={startWorkout}>
-        <Text style={[styles.startText, styles.text, fontStyles.semibold]}>{buttonTextRef.current}</Text>
+        <CustomText color="light" style={[styles.text, fontStyles.semibold]}>{buttonTextRef.current}</CustomText>
       </Pressable>
     );
   }
@@ -118,15 +119,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
-  cardTitle: {
-    color: appStyle.text.lightColor,
-    fontSize: fontSizes.cardTitle,
-    alignSelf: "center",
-  },
-  workoutName: {
-    color: appStyle.text.lightColor,
-    fontSize: fontSizes.cardSubTitle,
-  },
   cardText: {
     color: appStyle.text.lightColor,
     fontSize: fontSizes.bodyText,
@@ -141,9 +133,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     borderRadius: 20,
-  },
-  startText: {
-    color: appStyle.colors.secondaryColor,
   },
   createWorkoutMessage: {
     alignSelf: "center",

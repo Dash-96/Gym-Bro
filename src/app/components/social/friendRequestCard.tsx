@@ -1,6 +1,7 @@
-import { acceptFriendRequest } from "@/src/api/notificationApi";
+import { acceptFriendRequest, declineFriendRequest } from "@/src/api/notificationApi";
 import { RequestNotification } from "@/src/models/notificationModel";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryClient } from "@/src/serverStateStore/queryClient";
+import { useMutation } from "@tanstack/react-query";
 import { Check, X } from "lucide-react-native";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { appStyle, fontSizes, fontStyles } from "../../constants/theme";
@@ -11,9 +12,9 @@ type Props = {
   friendRequest: RequestNotification;
 };
 export default function FriendRequestsCard({ friendRequest }: Props) {
-  const queryClient = useQueryClient();
   const { mutate: requestMutation, isSuccess: isFriendAdded } = useMutation({ mutationKey: ["friendRequest"], mutationFn: acceptFriendRequest });
-  if (isFriendAdded) {
+  const { mutate: declineMutatuion, isSuccess: isFriendDeclined } = useMutation({ mutationKey: ["friendRequest"], mutationFn: declineFriendRequest });
+  if (isFriendAdded || isFriendDeclined) {
     queryClient.invalidateQueries({ queryKey: ["friendsList"] });
     queryClient.invalidateQueries({ queryKey: ["friend-requests"] });
   }
@@ -33,7 +34,7 @@ export default function FriendRequestsCard({ friendRequest }: Props) {
         <Pressable onPress={() => requestMutation(friendRequest.senderId)} style={styles.acceptButton}>
           <Check color={"white"} />
         </Pressable>
-        <Pressable style={styles.denyButton}>
+        <Pressable style={styles.denyButton} onPress={() => declineMutatuion(friendRequest.senderId)}>
           <X />
         </Pressable>
       </View>

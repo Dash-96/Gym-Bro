@@ -1,5 +1,5 @@
 import { appStyle, fontSizes, fontStyles } from "@/src/app/constants/theme";
-import { useTimerTicker } from "@/src/hooks/workoutHooks/customHooks";
+import { useTimerTicker } from "@/src/hooks/workoutHooks/workoutHooks";
 import { Redo2, Undo2 } from "lucide-react-native";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 

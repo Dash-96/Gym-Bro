@@ -33,9 +33,26 @@ export const cardStyles = {
   borderRadius: 10,
 };
 
+// Color tokens for the workout control card (light theme).
+export const workoutControlStyle = {
+  cardBg: appStyle.colors.secondaryColor,
+  cardBorder: appStyle.card.cardBorderColor,
+  cardShadow: appStyle.card.cardShadow,
+  durationBadgeBg: appStyle.colors.inputBg,
+  restCardBg: appStyle.colors.primaryTintColor,
+  restCardBorder: appStyle.card.cardBorderColor,
+  iconCircleBg: appStyle.colors.primaryColor,
+  onAccent: appStyle.text.lightColor,
+  title: appStyle.text.textColor,
+  subtitle: appStyle.text.secondaryTextColor,
+  label: appStyle.text.secondaryTextColor,
+  muted: appStyle.text.mutedTextColor,
+  finishButtonBg: appStyle.colors.accentColor,
+};
+
 export const fontSizes = {
   screenTitle: 26,
-  cardTitle: 18,
+  cardTitle: 20,
   cardSubTitle: 16,
   sectionHeader: 22,
   bodyText: 14,

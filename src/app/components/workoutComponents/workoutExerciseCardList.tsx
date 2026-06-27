@@ -22,7 +22,7 @@ export default function WorkoutExerciseCardList() {
     cardsRefs.current[cardOrder - 1].changeCardSize();
   }
   return (
-    <ScrollView style={styles.listConatiner} contentContainerStyle={{ alignItems: "center", gap: 10 }}>
+    <ScrollView style={styles.listConatiner} contentContainerStyle={{ alignItems: "center", gap: 10, paddingVertical: 20 }}>
       {workoutExercises.map((exercise, index) => (
         <WorkoutExerciseCard
           ref={(cardRef: CardRef) => {
@@ -38,5 +38,5 @@ export default function WorkoutExerciseCardList() {
 }
 
 const styles = StyleSheet.create({
-  listConatiner: { width: "90%", height: "70%", paddingTop: 20 },
+  listConatiner: { width: "90%", paddingTop: 20 },
 });

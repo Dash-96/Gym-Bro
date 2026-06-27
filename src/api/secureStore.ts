@@ -12,3 +12,8 @@ export async function setTokenAsync(token: string) {
 export async function setRefreshTokenAsync(token: string) {
   await SecureStore.setItemAsync("refreshToken", token);
 }
+
+export async function removeTokens() {
+  await SecureStore.setItemAsync("accessToken", "");
+  await SecureStore.setItemAsync("refreshToken", "");
+}

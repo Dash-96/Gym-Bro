@@ -1,5 +1,6 @@
 import { Workout } from "../models/workoutModel";
 import { mapToCreateWorkoutDto } from "../utils/mapperUtil";
+import { httpClient } from "./clients/httpClient";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 // const instance = axios.create({baseURL:apiUrl/workout})
@@ -23,16 +24,18 @@ export async function createWorkout(workout: Workout) {
       abortConteroller.abort();
     }, 10000);
     const createWorkoutDto = mapToCreateWorkoutDto(workout);
-    let response = await fetch(apiUrl + "/workout", {
-      method: "POST",
-      body: JSON.stringify(createWorkoutDto),
-      headers: {
-        "Content-type": "application/json",
-      },
-      signal: abortConteroller.signal,
-    });
+
+    // let response = await fetch(apiUrl + "/workout/create", {
+    //   method: "POST",
+    //   body: JSON.stringify(createWorkoutDto),
+    //   headers: {
+    //     "Content-type": "application/json",
+    //   },
+    //   signal: abortConteroller.signal,
+    // });
+    let response = await httpClient.post("/workout/create", JSON.stringify(createWorkoutDto));
     console.log(response.status);
-    let data = await response.json();
+    let data = response.data;
     console.log(data);
   } catch (error) {
     console.log(error);

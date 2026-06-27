@@ -16,15 +16,30 @@ export function useQuickStats() {
       try {
         let { currentStats, prevStats } = await getWorkoutAmountStats();
         let workoutChange: "up" | "down" = currentStats.workoutCount > prevStats.workoutCount ? "up" : "down";
-        let workoutPercent = Math.abs(((currentStats.workoutCount - prevStats.workoutCount) / prevStats.workoutCount) * 100);
+        let workoutPercent;
+        if (prevStats.workoutCount > 0) {
+          workoutPercent = Math.abs(((currentStats.workoutCount - prevStats.workoutCount) / prevStats.workoutCount) * 100);
+        } else {
+          workoutPercent = Math.abs(currentStats.workoutCount * 100);
+        }
         workoutStats = { value: currentStats.workoutCount, change: workoutChange, changePercent: workoutPercent };
 
         let setsChange: "up" | "down" = currentStats.setsCount > prevStats.setsCount ? "up" : "down";
-        let setsPercent = Math.abs(((currentStats.setsCount - prevStats.setsCount) / prevStats.setsCount) * 100);
+        let setsPercent;
+        if (prevStats.setsCount > 0) {
+          setsPercent = Math.abs(((currentStats.setsCount - prevStats.setsCount) / prevStats.setsCount) * 100);
+        } else {
+          setsPercent = Math.abs(currentStats.setsCount * 100);
+        }
         setsStats = { value: currentStats.setsCount, change: setsChange, changePercent: setsPercent };
 
         let volumeChange: "up" | "down" = currentStats.volume > prevStats.volume ? "up" : "down";
-        let volumePercent = Math.abs(((currentStats.volume - prevStats.volume) / prevStats.volume) * 100);
+        let volumePercent;
+        if (prevStats.volume > 0) {
+          volumePercent = Math.abs(((currentStats.volume - prevStats.volume) / prevStats.volume) * 100);
+        } else {
+          volumePercent = Math.abs(currentStats.volume * 100);
+        }
         volumeStats = { value: currentStats.volume, change: volumeChange, changePercent: volumePercent };
 
         setQuickStats({ workoutStats, setsStats, volumeStats });

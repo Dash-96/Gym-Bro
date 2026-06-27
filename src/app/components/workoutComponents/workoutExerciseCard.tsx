@@ -1,3 +1,4 @@
+import CustomText from "@/src/app/components/sharedComponents/customText";
 import { appStyle, cardStyles, fontSizes, fontStyles } from "@/src/app/constants/theme";
 import { useArrowRotate, useCardExpand } from "@/src/hooks/homeHooks/editWorkoutHooks";
 import { Exercise } from "@/src/models/workoutModel";
@@ -6,7 +7,7 @@ import { CircleCheckBig, Dot } from "lucide-react-native";
 import { Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
-import { useWorkoutTrackerContext } from "./excerciseCountContext";
+import { useWorkoutTrackerContext } from "./workoutTrackrContext";
 
 interface Props {
   exerciseData: Exercise;
@@ -21,7 +22,7 @@ export type CardRef = {
 };
 
 export default function WorkoutExerciseCard({ exerciseData, ref, onCardFocus }: Props) {
-  const { setCount } = useWorkoutTrackerContext();
+  const { setCount, setSetsCount, setISStarted } = useWorkoutTrackerContext();
   const { count: currentExerciseCount } = useWorkoutTrackerContext();
   const setsNumber = exerciseData.sets.length;
   const { cardAnimatedStyle, changeCardSize, isExpanded, meassureExpandedHeight } = useCardExpand(setsNumber, 60);
@@ -52,6 +53,10 @@ export default function WorkoutExerciseCard({ exerciseData, ref, onCardFocus }: 
   function startNextSet() {
     const newSet = currentSet + 1;
     updateCurrentSet(newSet);
+    setSetsCount(newSet);
+    if (currentExerciseCount == 0 && newSet == 1) {
+      setISStarted(true);
+    }
     if (newSet === setsNumber && !isCompleted.current) {
       isCompleted.current = true;
       setCount((prev) => prev + 1);
@@ -132,7 +137,7 @@ export default function WorkoutExerciseCard({ exerciseData, ref, onCardFocus }: 
         </View>
 
         <Pressable style={[styles.nextSetButton]} onPress={startNextSet}>
-          <Text style={{ color: "white" }}>Finish Set</Text>
+          <CustomText color="light">Finish Set</CustomText>
         </Pressable>
       </View>
     </Animated.View>

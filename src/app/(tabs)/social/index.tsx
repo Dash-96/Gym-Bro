@@ -23,6 +23,9 @@ const styles = StyleSheet.create({
   screenWraper: {
     paddingTop: 50,
     paddingHorizontal: 10,
+    gap: 20,
+    // width: "100%",
+    // flex: 1,
   },
   mainHeaderText: {
     fontSize: fontSizes.screenTitle,

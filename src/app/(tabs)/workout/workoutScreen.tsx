@@ -1,11 +1,9 @@
-import WorkoutTrackerContext from "@/src/app/components/workoutComponents/excerciseCountContext";
-import WorkoutHeader from "@/src/app/components/workoutComponents/wokoutHeader";
 import WorkoutExerciseCardList from "@/src/app/components/workoutComponents/workoutExerciseCardList";
-import WorkoutScreenFooter from "@/src/app/components/workoutComponents/workoutScreenFooter";
+import WorkoutTrackerContext from "@/src/app/components/workoutComponents/workoutTrackrContext";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { Text, View } from "react-native";
-import ProgressBar from "../../components/workoutComponents/progressBar";
 import StartWorkoutCard from "../../components/workoutComponents/startWorkoutCard";
+import { WorkoutControlCard } from "../../components/workoutComponents/workoutControl/workoutControlCard";
 
 export default function WorkoutScreen() {
   const workout = useWorkoutStore((state) => state.workout);
@@ -26,11 +24,9 @@ export default function WorkoutScreen() {
     return (
       <WorkoutTrackerContext>
         {workoutExists && (
-          <View style={{ alignItems: "center" }}>
-            <WorkoutHeader />
-            <ProgressBar />
+          <View style={{ alignItems: "center", flex: 1 }}>
+            <WorkoutControlCard />
             <WorkoutExerciseCardList />
-            <WorkoutScreenFooter />
           </View>
         )}
 
