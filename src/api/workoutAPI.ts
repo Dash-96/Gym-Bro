@@ -1,5 +1,5 @@
 import { Workout } from "../models/workoutModel";
-import { mapToCreateWorkoutDto } from "../utils/mapperUtil";
+import { WorkoutMapper } from "../utils/mapperUtil";
 import { httpClient } from "./clients/httpClient";
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
@@ -16,23 +16,9 @@ export async function getWorkouts() {
   return data;
 }
 
-export async function createWorkout(workout: Workout) {
+export async function submitWorkoutToRemote(workout: Workout) {
   try {
-    console.log("trying");
-    const abortConteroller = new AbortController();
-    setTimeout(() => {
-      abortConteroller.abort();
-    }, 10000);
-    const createWorkoutDto = mapToCreateWorkoutDto(workout);
-
-    // let response = await fetch(apiUrl + "/workout/create", {
-    //   method: "POST",
-    //   body: JSON.stringify(createWorkoutDto),
-    //   headers: {
-    //     "Content-type": "application/json",
-    //   },
-    //   signal: abortConteroller.signal,
-    // });
+    const createWorkoutDto = WorkoutMapper.mapToCreateWorkoutDto(workout);
     let response = await httpClient.post("/workout/create", JSON.stringify(createWorkoutDto));
     console.log(response.status);
     let data = response.data;
