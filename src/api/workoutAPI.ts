@@ -1,4 +1,4 @@
-import { Workout } from "../models/workoutModel";
+import { ExerciseMeta, ExerciseMuscleGroup, MUSCLE_GROUPS, Workout } from "../models/workoutModel";
 import { WorkoutMapper } from "../utils/mapperUtil";
 import { httpClient } from "./clients/httpClient";
 
@@ -25,5 +25,29 @@ export async function submitWorkoutToRemote(workout: Workout) {
     console.log(data);
   } catch (error) {
     console.log(error);
+  }
+}
+
+export async function getExerciseMetaData() {
+  try {
+    const response = await httpClient.get<ExerciseMeta[]>("/workout/exercise-meta");
+    console.log(response.data);
+    const data = response.data;
+    // let MUSCLE_GROUPS: Record<ExerciseMuscleGroup, ExerciseMeta[]> = {
+    //   Chest: data.filter((e) => e.targetMuscleGroup == "Chest"),
+    //   Back: data.filter((e) => e.targetMuscleGroup == "Back"),
+    //   Legs: data.filter((e) => e.targetMuscleGroup == "Legs"),
+    //   Shoulders: data.filter((e) => e.targetMuscleGroup == "Shoulders"),
+    //   Biceps: data.filter((e) => e.targetMuscleGroup == "Biceps"),
+    //   Triceps: data.filter((e) => e.targetMuscleGroup == "Triceps"),
+    // };
+
+    let exerciseDataMap = Object.fromEntries(MUSCLE_GROUPS.map((group) => [group, data.filter((exercise) => exercise.targetMuscleGroup == group)])) as Record<
+      ExerciseMuscleGroup,
+      ExerciseMeta[]
+    >;
+    return exerciseDataMap;
+  } catch (err) {
+    throw new Error("could not get exercise data");
   }
 }
