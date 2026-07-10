@@ -28,7 +28,7 @@ export function calculateLiftingScore(totalWeightLifted: number, userWeight: num
     co.fifth * Math.pow(userWeight, 4) +
     co.sixth * Math.pow(userWeight, 5);
   const score = totalWeightLifted * (500 / delimeter);
-  return score;
+  return Number(score.toFixed(2));
 }
 
 //. Define the leaderboard categories

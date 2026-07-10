@@ -3,8 +3,8 @@ import { create } from "zustand";
 
 const defaultWorkout: Workout = {
   id: 0,
-  workoutType: "default",
-  workoutAlias: "default",
+  workoutType: "",
+  workoutAlias: "",
   notes: "",
   startedAt: null,
   finishedAt: null,

@@ -4,7 +4,7 @@ import { httpClient } from "./clients/httpClient";
 
 export async function getWeightRivalCompetiton(rivalId: number): Promise<rival | undefined> {
   try {
-    const response = await httpClient.get(`/workout/weight-volume?rivalId=${rivalId}`);
+    const response = await httpClient.get(`/social/weight-volume?rivalId=${rivalId}`);
     console.log(response.data);
     return response.data;
   } catch (err) {}
@@ -12,7 +12,7 @@ export async function getWeightRivalCompetiton(rivalId: number): Promise<rival |
 
 export async function getFriendsLeaderBoardData(): Promise<Array<LeaderBoardFriend> | undefined> {
   try {
-    const response = await httpClient.get<Array<LeaderBoardFriend>>("/workout/friends-leaderboard");
+    const response = await httpClient.get<Array<LeaderBoardFriend>>("/social/friends-leaderboard");
     console.log(response.data);
     return response.data;
   } catch (err) {
@@ -20,11 +20,10 @@ export async function getFriendsLeaderBoardData(): Promise<Array<LeaderBoardFrie
   }
 }
 
-//! Continue
 export async function getFriendsList(): Promise<Friend[]> {
   let friends = [];
   try {
-    const response = await httpClient.get("/user/friends");
+    const response = await httpClient.get("/social/friends");
     friends = response.data;
     console.log(friends);
   } catch (err) {
@@ -39,7 +38,7 @@ export async function getAllUsers(prefix: string): Promise<Array<Friend>> {
     if (prefix.trim() == "") {
       return [];
     }
-    const response = await httpClient.get(`/user/getAllUsers?prefix=${prefix}`);
+    const response = await httpClient.get(`/social/getAllUsers?prefix=${prefix}`);
     console.log(response.data);
     const users = response.data.map((entry: { userId: number; userName: string }) => ({ friendId: entry.userId, userName: entry.userName }));
     return users;

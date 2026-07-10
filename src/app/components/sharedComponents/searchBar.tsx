@@ -7,11 +7,12 @@ type SearchBarProps = {
   onChangeText: (text: string) => void;
   onClear?: () => void;
   placeholder?: string;
+  style?: object;
 };
 
-export default function SearchBar({ value, onChangeText, onClear, placeholder = "Search by name or username" }: SearchBarProps) {
+export default function SearchBar({ value, onChangeText, onClear, placeholder = "Search by name or username", style }: SearchBarProps) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style ?? {}]}>
       <Ionicons name="search" size={20} color={appStyle.text.secondaryTextColor} />
       <TextInput
         style={styles.input}

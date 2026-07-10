@@ -23,6 +23,20 @@ export const appStyle = {
     secondaryTextColor: "#475569",
   },
 
+  fontSizes: {
+    small: 12,
+    medium: 16,
+    large: 20,
+    xLarge: 24,
+    huge: 30,
+  },
+
+  fontStyles: {
+    regular: "Inter_400Regular",
+    medium: "Inter_500Medium",
+    semibold: "Inter_600SemiBold",
+  },
+
   // amber: "#F59E0B ",
 };
 

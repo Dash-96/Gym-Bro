@@ -1,5 +1,5 @@
-import { appStyle, fontSizes, fontStyles } from "@/src/app/constants/theme";
 import CustomText from "@/src/app/components/sharedComponents/customText";
+import { appStyle, fontSizes, fontStyles } from "@/src/app/constants/theme";
 import { getNextWorkout, updateWorkout } from "@/src/repositories/workoutRepo";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -53,7 +53,7 @@ export default function WorkOutDetailsCard() {
   }, [currentWorkoutState.id]);
 
   function navigateToEdit() {
-    router.push(`/home/editWorkoutScreen?screenType=${cardType}`);
+    router.push(`/home/workoutEditScreen?screenType=${cardType}`);
   }
 
   //=
@@ -70,7 +70,9 @@ export default function WorkOutDetailsCard() {
     <ImageBackground source={require("@/assets/images/create-workout-card.png")} imageStyle={{ borderRadius: 24 }} style={styles.cardContainer}>
       <View style={{ paddingHorizontal: 10, gap: 10 }}>
         <Pressable onPress={navigateToEdit}>
-          <CustomText variant="cardTitle" color="light" style={{ alignSelf: "center" }}>Next Workout</CustomText>
+          <CustomText variant="cardTitle" color="light" style={{ alignSelf: "center" }}>
+            Next Workout
+          </CustomText>
           {cardType == "edit" && (
             <View style={{ gap: 10, width: "100%" }}>
               <View style={styles.rowContainr}>
@@ -79,9 +81,15 @@ export default function WorkOutDetailsCard() {
                 </CustomText>
               </View>
               <View style={styles.rowContainr}>
-                <CustomText variant="cardSubTitle" color="light" style={styles.text}>{workoutDetails.exerciseCount} exercises </CustomText>
-                <CustomText variant="cardSubTitle" color="light" style={styles.text}>{workoutDetails.setsCount} sets </CustomText>
-                <CustomText variant="cardSubTitle" color="light" style={styles.text}>~ {workoutDetails.duration} min</CustomText>
+                <CustomText variant="cardSubTitle" color="light" style={styles.text}>
+                  {workoutDetails.exerciseCount} exercises{" "}
+                </CustomText>
+                <CustomText variant="cardSubTitle" color="light" style={styles.text}>
+                  {workoutDetails.setsCount} sets{" "}
+                </CustomText>
+                <CustomText variant="cardSubTitle" color="light" style={styles.text}>
+                  ~ {workoutDetails.duration} min
+                </CustomText>
               </View>
             </View>
           )}
@@ -95,7 +103,9 @@ export default function WorkOutDetailsCard() {
   function StartButton() {
     return (
       <Pressable style={styles.startButton} onPress={startWorkout}>
-        <CustomText color="light" style={[styles.text, fontStyles.semibold]}>{buttonTextRef.current}</CustomText>
+        <CustomText color="light" style={[styles.text, fontStyles.semibold]}>
+          {buttonTextRef.current}
+        </CustomText>
       </Pressable>
     );
   }

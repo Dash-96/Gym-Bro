@@ -5,7 +5,7 @@ export default function TabsLayout() {
   return (
     <Stack screenOptions={{ contentStyle: { backgroundColor: appStyle.colors.secondaryColor }, headerShown: false }}>
       <Stack.Screen name="index" options={{ title: "Home" }}></Stack.Screen>
-      <Stack.Screen name="editWorkoutScreen" options={{ title: "edit" }}></Stack.Screen>
+      <Stack.Screen name="workoutEditScreen" options={{ title: "edit" }}></Stack.Screen>
     </Stack>
   );
 }

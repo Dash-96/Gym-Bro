@@ -1,11 +1,11 @@
-import { createWorkout } from "@/src/api/workoutAPI";
+import { submitWorkoutToRemote } from "@/src/api/workoutAPI";
 import { CreateExercisePopup } from "@/src/app/components/homeComponents/editScreenComponents/createExercisePopup";
 import EditHeaderCard from "@/src/app/components/homeComponents/editScreenComponents/editHeaderCard";
 import ExerciseCardList from "@/src/app/components/homeComponents/editScreenComponents/exerciseCardList";
 import NoExerciseCard from "@/src/app/components/homeComponents/editScreenComponents/noExerciseCard";
 import NotesCard from "@/src/app/components/homeComponents/editScreenComponents/notesCard";
-import { appStyle } from "@/src/app/constants/theme";
 import CustomText from "@/src/app/components/sharedComponents/customText";
+import { appStyle } from "@/src/app/constants/theme";
 import { useHiddenTabBar } from "@/src/hooks/sharedHooks/useHiddenTabBar";
 import { insertWorkout, updateWorkout } from "@/src/repositories/workoutRepo";
 import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
@@ -15,7 +15,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, ToastAndroid } from "react-native";
 
-export default function EditWorkoutScreen() {
+export default function WorkoutEditScreen() {
   const workoutData = useWorkoutStore((state) => state.workout);
   const setWorkoutState = useWorkoutStore((state) => state.setWorkout);
   const isExistingWorkout = workoutData.id ?? true;
@@ -24,11 +24,15 @@ export default function EditWorkoutScreen() {
   const [isModalVisible, setModalVisisble] = useState(false);
   useHiddenTabBar();
   const router = useRouter();
-  const workoutMutation = useMutation({ mutationKey: ["createWorkout"], mutationFn: createWorkout, retry: 3 });
+  const workoutMutation = useMutation({ mutationKey: ["createWorkout"], mutationFn: submitWorkoutToRemote, retry: 3 });
 
-  // Persists the workout to SQLite, shows a toast, then navigates back to home
+  /// Persists the workout to SQLite, shows a toast, then navigates back to home
   async function saveWorkout(action: string) {
     if (action == "save") {
+      if (workoutData.workoutType === "") {
+        alert("You have to choose a workout type");
+        return;
+      }
       let workoutId = await insertWorkout(workoutData);
       if (workoutId) {
         setWorkoutState({ id: workoutId });
@@ -52,19 +56,18 @@ export default function EditWorkoutScreen() {
     }
   }
 
-  console.log(workoutData.id);
-
-  // console.log(`!!!!first item is: ${workoutData.workoutDetails[0].excerciseName} ||| second item is: ${workoutData.workoutDetails[1].excerciseName}`);
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === "android" ? 80 : 0}>
       <ScrollView style={styles.pageContainer} contentContainerStyle={styles.pageContainerContent} keyboardShouldPersistTaps="handled">
         <EditHeaderCard />
-        {/* Show exercise list if exercises exist, otherwise show the empty state card */}
+        {/*//. Show exercise list if exercises exist, otherwise show the empty state card */}
         {hasExercises ? <ExerciseCardList /> : <NoExerciseCard />}
-        {isModalVisible && <CreateExercisePopup visible={true} onClose={() => setModalVisisble(false)} orderIndex={1} />}
+        <CreateExercisePopup visible={isModalVisible} onClose={() => setModalVisisble(false)} orderIndex={1} />
         <Pressable style={styles.addExerciseButton} onPress={() => setModalVisisble(true)}>
           <AntDesign name="plus" size={16} color="white" />
-          <CustomText variant="button" color="light" style={{ fontWeight: "bold" }}>Add Exercise</CustomText>
+          <CustomText variant="button" color="light" style={{ fontWeight: "bold" }}>
+            Add Exercise
+          </CustomText>
         </Pressable>
         <NotesCard />
         <Pressable style={styles.saveButton} onPress={() => saveWorkout(`${isExistingWorkout ? "update" : "save"}`)}>

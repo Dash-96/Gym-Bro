@@ -31,7 +31,7 @@ export async function Register(displayName: string, password: string, phone: str
 
 export async function Login(displayName: string, password: string) {
   try {
-    // console.log("enreted function");
+    console.log("enreted function");
     const response = await authClient.post("/login", { displayName, password });
     const accessToken = response.data.accessToken;
     const refreshToken = response.data.refreshToken;

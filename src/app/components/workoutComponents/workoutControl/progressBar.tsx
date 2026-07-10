@@ -38,7 +38,8 @@ export default function ProgressBar() {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    // width: "100%",
+    // flex: 1,
     gap: 8,
     position: "fixed",
     top: 0,

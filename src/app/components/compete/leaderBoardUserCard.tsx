@@ -1,51 +1,40 @@
-import { LeaderBoardFriend } from "@/src/models/competeModel";
+import { LeaderBoardData } from "@/src/models/competeModel";
 import { leaderBoardTabValue } from "@/src/utils/competeUtils";
-import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { appStyle } from "../../constants/theme";
 import CustomText from "../sharedComponents/customText";
 import SimpleCard from "../sharedComponents/simpleCard";
-import UserCircle from "../sharedComponents/userCircle";
 
 type Props = {
   cardIndex: number;
-  friend: LeaderBoardFriend;
+  leaderBoardEntry: LeaderBoardData;
   leaderBoardType: leaderBoardTabValue;
 };
-export default function LeaderBoardUserCard({ cardIndex, friend, leaderBoardType }: Props) {
-  const [cardData, setCardData] = useState<string>("");
-  useEffect(() => {
-    leaderBoardData();
-  }, [leaderBoardType]);
-  function leaderBoardData() {
-    let data = 0;
+export default function LeaderBoardUserCard({ cardIndex, leaderBoardEntry: friend, leaderBoardType }: Props) {
+  // const [cardData, setCardData] = useState<string>("");
+
+  function setCardData() {
     switch (leaderBoardType) {
       case "Workouts":
-        data = friend.workouts.length;
-        setCardData(data.toString() + " workouts");
-        break;
+        return friend.workoutsCount;
       case "Volume":
-        friend.workouts.forEach((workout) => {
-          console.log(workout);
-          workout.exercises.forEach((exercise) => {
-            exercise.sets.forEach((set) => (data += set.reps * set.weight));
-          });
-        });
-        setCardData(data.toString() + " kg");
-        break;
+        return friend.totalVolume;
       case "R.Volume":
-        break;
+        return friend.rVolume;
     }
   }
+  console.log(friend);
+
   return (
     <SimpleCard customStyle={styles.cardContainer}>
-      <UserCircle customWidth={50} customHeight={50} circleNumber={cardIndex} userSymbol={friend.userName.slice(0, 1)} />
+      {/* <UserCircle customWidth={50} customHeight={50} circleNumber={cardIndex} userSymbol={friend.userName.slice(0, 1)} /> */}
+      <Text style={styles.rank}>#{cardIndex + 1}</Text>
       <View style={styles.contentWraper}>
         <CustomText variant="cardSubTitle" style={styles.userName}>
           {friend.userName}
         </CustomText>
         <CustomText variant="cardSubTitle" color="secondary">
-          {cardData}
+          {setCardData()}
         </CustomText>
       </View>
     </SimpleCard>
@@ -58,6 +47,11 @@ const styles = StyleSheet.create({
     backgroundColor: appStyle.colors.primaryTintColor,
     gap: 10,
     paddingInline: 10,
+  },
+  rank: {
+    fontFamily: appStyle.fontStyles.semibold,
+    color: appStyle.colors.primaryColor,
+    fontSize: appStyle.fontSizes.medium,
   },
   contentWraper: {
     flexDirection: "row",

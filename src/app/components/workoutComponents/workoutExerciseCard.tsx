@@ -25,18 +25,18 @@ export default function WorkoutExerciseCard({ exerciseData, ref, onCardFocus }: 
   const { setCount, setSetsCount, setISStarted } = useWorkoutTrackerContext();
   const { count: currentExerciseCount } = useWorkoutTrackerContext();
   const setsNumber = exerciseData.sets.length;
-  const { cardAnimatedStyle, changeCardSize, isExpanded, meassureExpandedHeight } = useCardExpand(setsNumber, 60);
+  const { cardAnimatedStyle, changeCardSize, isExpanded, meassureExpandedHeight, isHeightMeassured } = useCardExpand(setsNumber, 60);
   const { arrowRotateStyle, rotateArrow, isDisabled } = useArrowRotate();
   const [currentSet, updateCurrentSet] = useState(0);
   const isCompleted = useRef(false);
   const isCurrentExercise = currentExerciseCount + 1 == exerciseData.orderIndex;
   useEffect(() => {
-    if (isCurrentExercise) {
+    if (isCurrentExercise && isHeightMeassured) {
       changeCardSize();
     } else if (currentExerciseCount == exerciseData.orderIndex) {
-      changeCardSize();
+      // changeCardSize();
     }
-  }, [isCurrentExercise]);
+  }, [isHeightMeassured]);
 
   /// Creates a ref to expose functions that the parent can invoke
   useImperativeHandle(

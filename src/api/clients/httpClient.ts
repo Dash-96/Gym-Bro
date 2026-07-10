@@ -2,10 +2,11 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { refreshAccess } from "../authApi";
 import { getTokenAsync } from "../secureStore";
 
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 const accessToken = getTokenAsync();
 console.log(accessToken);
 
-export const httpClient = axios.create({ baseURL: "http://10.223.146.241:5276/api" });
+export const httpClient = axios.create({ baseURL: API_URL });
 
 //= Add access token to requests
 httpClient.interceptors.request.use(async (config) => {

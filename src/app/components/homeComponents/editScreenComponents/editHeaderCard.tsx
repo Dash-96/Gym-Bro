@@ -14,7 +14,7 @@ export default function EditHeaderCard() {
   const updateWorkoutState = useWorkoutStore((state) => state.setWorkout);
   const currentType = useWorkoutStore((state) => state.workout.workoutType);
   // console.log(currentType != "");
-  const workoutTypeList = ["Push", "Pull", "Legs", "Full Body", "Upper", "Lower", "Custom"];
+  const workoutTypeList = ["Push", "Pull", "Legs", "Full Body", "Upper", "Lower"];
   const { arrowRotateStyle, rotateArrow } = useArrowRotate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [workoutType, setWorkoutType] = useState(currentType);

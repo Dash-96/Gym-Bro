@@ -31,3 +31,6 @@ export type ExerciseMeta = {
   exerciseName: string;
   targetMuscleGroup: string;
 };
+
+export const MUSCLE_GROUPS = ["Chest", "Back", "Legs", "Shoulders", "Biceps", "Triceps"] as const;
+export type ExerciseMuscleGroup = (typeof MUSCLE_GROUPS)[number];

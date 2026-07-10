@@ -10,3 +10,5 @@ export type LeaderBoardFriend = {
   userName: string;
   workouts: Workout[];
 };
+
+export type LeaderBoardData = { userName: string; workoutsCount: number; totalVolume: number; rVolume: number };

@@ -1,10 +1,13 @@
+import { submitWorkoutToRemote } from "@/src/api/workoutAPI";
 import { useWorkoutTrackerContext } from "@/src/app/components/workoutComponents/workoutTrackrContext";
+import { Workout } from "@/src/models/workoutModel";
+import { updateWorkout } from "@/src/repositories/workoutRepo";
+import { useWorkoutStore } from "@/src/stateStore/workoutStore/workoutStore";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 
 export function useTimerTicker(rest: String = "") {
   const { setsCount, isStarted } = useWorkoutTrackerContext();
-  console.log("count: ", setsCount);
-  console.log("isStarted: ", isStarted);
   const [restDuration, setRestDuration] = useState({ hours: "00", minutes: "02", seconds: "00" });
   const [, setTotalSecondsRemaining] = useState(() => {
     if (!rest) return 120;
@@ -64,4 +67,20 @@ export function useTimerTicker(rest: String = "") {
   }
 
   return { restDuration, alterTime };
+}
+
+export function useFinishWorkout(workoutState: Workout) {
+  const resetWorkoutState = useWorkoutStore((state) => state.resetWorkout);
+  async function finishWorkout() {
+    const finishTime = new Date();
+    const tempWorkoutState = { ...workoutState };
+    tempWorkoutState.finishedAt = finishTime;
+    /// Saves workout to local DB
+    await updateWorkout(tempWorkoutState);
+    /// Save the workout to remote DB
+    submitWorkoutToRemote(tempWorkoutState);
+    resetWorkoutState();
+    router.replace("/(tabs)/home");
+  }
+  return finishWorkout;
 }

@@ -11,6 +11,7 @@ import { scheduleOnRN } from "react-native-worklets";
 export function useCardExpand(setCount = 1, offset = 0) {
   const shrinkedSize = 60;
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isHeightMeassured, setIsHeightMeassured] = useState(false);
   const messureExpandeddHeightRef = useRef(0);
   const cardHeight = useSharedValue(shrinkedSize);
   const cardAnimatedStyle = useAnimatedStyle(() => ({
@@ -20,9 +21,12 @@ export function useCardExpand(setCount = 1, offset = 0) {
     /// Measure the height on each layout change, and set the max height to be the expanded height
     let isHeightGrew = messureExpandeddHeightRef.current < event.nativeEvent.layout.height;
     messureExpandeddHeightRef.current = Math.max(messureExpandeddHeightRef.current, event.nativeEvent.layout.height);
+    if (!isHeightMeassured) {
+      setIsHeightMeassured(true);
+    }
     if (isHeightGrew) {
       /// that means the new calculated height was larger than the previous, so we expand the card more
-      cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? messureExpandeddHeightRef.current : shrinkedSize, { duration: 500 });
+      cardHeight.value = withSpring(messureExpandeddHeightRef.current, { duration: 500 });
     }
   }
   function changeCardSize() {
@@ -31,7 +35,7 @@ export function useCardExpand(setCount = 1, offset = 0) {
     setIsExpanded((prev) => !prev);
     cardHeight.value = withSpring(cardHeight.value === shrinkedSize ? messureExpandeddHeightRef.current : shrinkedSize, { duration: 500 });
   }
-  return { cardAnimatedStyle, changeCardSize, isExpanded, meassureExpandedHeight };
+  return { cardAnimatedStyle, changeCardSize, isExpanded, meassureExpandedHeight, isHeightMeassured };
 }
 
 //= This hook controls the rotation of the arrow when pressed
@@ -189,5 +193,26 @@ export function useEditSet() {
     setSets((prev) => prev.map((set, index) => (index === setNumber ? { ...set, [field]: value } : set)));
   };
 
-  return { sets, handleSetCountChange, handleSetChange };
+  //= append a new set at the end, copying the last set's values
+  const duplicateLastSet = () => {
+    setSets((prev) => {
+      const lastSet = prev[prev.length - 1] ?? { reps: "", weight: "" };
+      return [...prev, { ...lastSet }];
+    });
+  };
+
+  //= copy the first set's values into every other set that hasn't been filled in yet
+  const applyFirstSetToEmpty = () => {
+    setSets((prev) => {
+      const firstSet = prev[0];
+      if (!firstSet) return prev;
+      return prev.map((set, index) => {
+        if (index === 0) return set;
+        const isEmpty = set.reps === "" && set.weight === "";
+        return isEmpty ? { ...firstSet } : set;
+      });
+    });
+  };
+
+  return { sets, handleSetCountChange, handleSetChange, duplicateLastSet, applyFirstSetToEmpty };
 }
